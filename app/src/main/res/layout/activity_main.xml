@@ -3,36 +3,28 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ECEFF1"
-    android:paddingTop="48dp">
+    android:background="#ECEFF1">
 
-    <!-- Top banner bar (bleeds off the top) -->
+    <!-- Top banner bar -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="96dp"
         android:gravity="bottom|start"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
         android:text="Expense Tracker"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:background="#455A64"
         android:textColor="@android:color/white"
-        android:layout_marginTop="-40dp"
-        android:paddingBottom="16dp"/>
+        android:background="#455A64" />
 
-    <!-- Spacer to push buttons down slightly -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Button grid container -->
+    <!-- Button grid container (body remains unchanged) -->
     <LinearLayout
         android:orientation="vertical"
         android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp">
 
         <!-- First row of buttons -->
         <LinearLayout
@@ -94,11 +86,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <!-- Spacer to keep grid vertically centered -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
 </LinearLayout>
