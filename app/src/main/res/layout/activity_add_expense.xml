@@ -26,12 +26,14 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="135dp">
 
-    <Spinner
+        <Spinner
             android:id="@+id/spinner_category"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginBottom="16dp"
-            android:prompt="@string/category_prompt" />
+            android:spinnerMode="dropdown"
+            android:popupBackground="#FFFFFF"
+            android:theme="@style/SpinnerTheme"/>
 
         <EditText
             android:id="@+id/edit_description"
@@ -51,15 +53,18 @@
         <TextView
             android:id="@+id/text_date"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:text="Select Date"
             android:padding="12dp"
-            android:background="#DDDDDD"
-            android:layout_marginBottom="24dp"/>
+            android:background="#FFDDC1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"
+            android:gravity="center_vertical|start"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_save"
-            android:layout_width="280dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@null"
@@ -67,7 +72,5 @@
             android:textColor="#FFFFFF"
             android:textAllCaps="false"
             android:layout_marginTop="16dp"/>
-
     </LinearLayout>
-
 </LinearLayout>

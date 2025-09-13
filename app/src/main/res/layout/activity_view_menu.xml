@@ -5,34 +5,71 @@
     android:layout_height="match_parent"
     android:background="#ECEFF1">
 
-    <!-- Top bar that bleeds under status icons -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:gravity="center_vertical|start"
-        android:paddingStart="16dp"
-        android:paddingTop="32dp"
-        android:text="View Menu"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:background="#455A64" />
+    <!-- Top bar -->
+    <include layout="@layout/top_bar" />
 
-    <!-- Body placeholder -->
+    <!-- Spacer to push buttons slightly above vertical center -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- Buttons container -->
     <LinearLayout
         android:orientation="vertical"
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingHorizontal="32dp"
+        android:layout_marginBottom="48dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnViewAll"
+            android:layout_width="260dp"
             android:layout_height="wrap_content"
-            android:text="Select a View Option"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#607D8B" />
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@null"
+            android:text="View All"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"/>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDateWise"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@null"
+            android:text="Date Wise"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnMonthWise"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@null"
+            android:text="Month Wise"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCategoryWise"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@null"
+            android:text="Category Wise"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"/>
     </LinearLayout>
 
+    <!-- Bottom spacer -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 </LinearLayout>
