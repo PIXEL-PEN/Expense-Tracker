@@ -57,13 +57,16 @@
             android:background="#DDDDDD"
             android:layout_marginBottom="24dp"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_save"
-            android:layout_width="match_parent"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@null"
             android:text="Save"
-            android:background="#6200EE"
-            android:textColor="#FFFFFF"/>
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:layout_marginTop="16dp"/>
 
     </LinearLayout>
 
