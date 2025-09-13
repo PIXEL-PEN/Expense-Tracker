@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ECEFF1"
+    android:paddingTop="48dp">
+
+    <!-- Top banner bar (bleeds off the top) -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:gravity="bottom|start"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="Expense Tracker"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="#455A64"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="-40dp"
+        android:paddingBottom="16dp"/>
+
+    <!-- Spacer to push buttons down slightly -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Button grid container -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- First row of buttons -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp">
+
+            <Button
+                android:id="@+id/btn_add"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:text="Add"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#607D8B"
+                android:layout_margin="5dp"
+                android:elevation="4dp" />
+
+            <Button
+                android:id="@+id/btn_view"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:text="View"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#607D8B"
+                android:layout_margin="5dp"
+                android:elevation="4dp" />
+
+        </LinearLayout>
+
+        <!-- Second row of buttons -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btn_settings"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:text="Settings"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#607D8B"
+                android:layout_margin="5dp"
+                android:elevation="4dp" />
+
+            <Button
+                android:id="@+id/btn_about"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:text="About"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#607D8B"
+                android:layout_margin="5dp"
+                android:elevation="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Spacer to keep grid vertically centered -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
