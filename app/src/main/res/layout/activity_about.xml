@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
     android:background="#ECEFF1">
 
+    <!-- Top bar -->
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="About Screen (Placeholder)"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:gravity="center_vertical|start"
+        android:paddingStart="16dp"
+        android:paddingTop="32dp"
+        android:text="About"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#455A64" />
+        android:background="#455A64" />
+
+    <!-- Body placeholder -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="About Placeholder"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#607D8B" />
+
+    </LinearLayout>
+
 </LinearLayout>

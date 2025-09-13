@@ -1,38 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="#ECEFF1">
 
     <!-- Top bar -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="96dp"
         android:gravity="center_vertical|start"
         android:paddingStart="16dp"
+        android:paddingTop="32dp"
         android:text="Add Expense"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:background="#455A64"
-        android:textColor="#FFFFFF"/>
+        android:background="#455A64" />
 
-    <!-- Body container -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="24dp"
         android:gravity="center_horizontal"
-        android:layout_marginTop="120dp"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp">
+        android:layout_marginTop="135dp">
 
-        <Spinner
+    <Spinner
             android:id="@+id/spinner_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#607D8B"
             android:prompt="@string/category_prompt" />
 
         <EditText
@@ -40,10 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Description"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="#607D8B"
-            android:textColor="#000000"
-            android:textColorHint="#555555"/>
+            android:layout_marginBottom="16dp"/>
 
         <EditText
             android:id="@+id/edit_amount"
@@ -51,10 +46,7 @@
             android:layout_height="wrap_content"
             android:hint="Amount"
             android:inputType="numberDecimal"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="#607D8B"
-            android:textColor="#000000"
-            android:textColorHint="#555555"/>
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/text_date"
@@ -62,8 +54,7 @@
             android:layout_height="wrap_content"
             android:text="Select Date"
             android:padding="12dp"
-            android:background="#CFD8DC"
-            android:textColor="#000000"
+            android:background="#DDDDDD"
             android:layout_marginBottom="24dp"/>
 
         <Button
@@ -71,9 +62,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Save"
-            android:backgroundTint="#607D8B"
-            android:textColor="#FFFFFF"
-            android:elevation="4dp"/>
+            android:background="#6200EE"
+            android:textColor="#FFFFFF"/>
+
     </LinearLayout>
 
 </LinearLayout>
