@@ -26,14 +26,15 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="135dp">
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spinner_category"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="56dp"
             android:layout_marginBottom="16dp"
             android:spinnerMode="dropdown"
             android:popupBackground="#FFFFFF"
-            android:theme="@style/SpinnerTheme"/>
+            android:background="#FFDDC1" />
+
 
         <EditText
             android:id="@+id/edit_description"

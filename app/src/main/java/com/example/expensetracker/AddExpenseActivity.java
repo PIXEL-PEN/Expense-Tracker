@@ -42,7 +42,9 @@ public class AddExpenseActivity extends AppCompatActivity {
         ) {
             @Override
             public android.view.View getDropDownView(int position, android.view.View convertView, android.view.ViewGroup parent) {
-                return getLayoutInflater().inflate(R.layout.spinner_item_dropdown, parent, false);
+                TextView tv = (TextView) getLayoutInflater().inflate(R.layout.spinner_item_dropdown, parent, false);
+                tv.setText(getItem(position));
+                return tv;
             }
         };
         spinnerCategory.setAdapter(adapter);
