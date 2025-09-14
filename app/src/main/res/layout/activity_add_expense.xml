@@ -29,12 +29,13 @@
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spinner_category"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:layout_marginBottom="16dp"
             android:spinnerMode="dropdown"
             android:popupBackground="#FFFFFF"
-            android:background="@drawable/spinner_background"
-            android:paddingEnd="16dp" />
+            android:background="@drawable/spinner_with_arrow"
+            android:paddingStart="12dp"
+            android:paddingEnd="44dp"/> <!-- was 36dp, bumped to 44 -->
 
 
 

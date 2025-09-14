@@ -6,13 +6,23 @@
     android:background="#ECEFF1">
 
     <!-- Top bar -->
-    <include layout="@layout/top_bar" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:gravity="center_vertical|start"
+        android:paddingStart="16dp"
+        android:paddingTop="32dp"
+        android:text="View Menu"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="#455A64" />
 
-    <!-- Spacer to push buttons slightly above vertical center -->
+    <!-- Spacer pushes buttons downward -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="6"/>
 
     <!-- Buttons container -->
     <LinearLayout
@@ -71,5 +81,5 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="7"/>
 </LinearLayout>
