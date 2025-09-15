@@ -1,35 +1,42 @@
 package com.example.expensetracker;
 
-import android.app.AlertDialog;
-import android.content.SharedPreferences;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class AddExpenseActivity extends AppCompatActivity {
 
     private Spinner spinnerCategory;
-    private ArrayAdapter<String> categoryAdapter;
+    private ArrayAdapter<String> spinnerAdapter;
 
+    // Default categories (fixed, cannot be deleted)
     private final List<String> defaultCategories = Arrays.asList(
-            "Groceries", "Transport", "Medical", "Clothing", "Household",
-            "Electronics", "Utilities", "Personal Care", "Subscriptions", "Travel", "Other"
+            "Groceries",
+            "Household",
+            "Utilities",
+            "Medical",
+            "Transport",
+            "Other"
     );
 
-    private List<String> userCategories = new ArrayList<>();
+    // Mutable categories list
+    private final List<String> categories = new ArrayList<>();
+    private CategoryAdapter categoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,96 +45,144 @@ public class AddExpenseActivity extends AppCompatActivity {
 
         spinnerCategory = findViewById(R.id.spinner_category);
 
-        loadCategories();
-        updateCategorySpinner();
+        // Initialize categories with defaults
+        categories.clear();
+        categories.addAll(defaultCategories);
 
-        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // Add special "EDIT CATEGORIES+" option at end
+        categories.add("EDIT CATEGORIES+");
+
+        spinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,
+                categories);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(spinnerAdapter);
+
+        spinnerCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selected = categoryAdapter.getItem(position);
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                String selected = categories.get(position);
                 if ("EDIT CATEGORIES+".equals(selected)) {
-                    openEditCategoriesDialog();
-                    // Reset selection to first item so we don’t stay stuck on the edit option
+                    showEditCategoriesDialog();
+                    // Reset spinner to first item after opening dialog
                     spinnerCategory.setSelection(0);
                 }
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(android.widget.AdapterView<?> parent) { }
         });
     }
 
-    private void updateCategorySpinner() {
-        List<String> allCategories = new ArrayList<>();
-        allCategories.addAll(defaultCategories);
-        allCategories.addAll(userCategories);
-        allCategories.add("EDIT CATEGORIES+");
-
-        categoryAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, allCategories);
-        spinnerCategory.setAdapter(categoryAdapter);
-    }
-
-    private void loadCategories() {
-        SharedPreferences prefs = getSharedPreferences("categories", MODE_PRIVATE);
-        Set<String> saved = prefs.getStringSet("userCategories", new HashSet<>());
-        userCategories = new ArrayList<>(saved);
-    }
-
-    private void saveCategories() {
-        SharedPreferences prefs = getSharedPreferences("categories", MODE_PRIVATE);
-        prefs.edit().putStringSet("userCategories", new HashSet<>(userCategories)).apply();
-    }
-
-    private void openEditCategoriesDialog() {
+    private void showEditCategoriesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Edit Categories");
 
-        // Layout with list + input
-        final ListView listView = new ListView(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, userCategories);
-        listView.setAdapter(adapter);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_edit_categories, null);
+        builder.setView(dialogView);
 
-        // Long press to delete user category
-        listView.setOnItemLongClickListener((parent, view, position, id) -> {
-            String cat = userCategories.get(position);
-            userCategories.remove(position);
-            adapter.notifyDataSetChanged();
-            saveCategories();
-            updateCategorySpinner();
-            Toast.makeText(this, "Deleted: " + cat, Toast.LENGTH_SHORT).show();
-            return true;
-        });
+        RecyclerView recyclerView = dialogView.findViewById(R.id.recycler_categories);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Input for adding new category
-        final EditText input = new EditText(this);
-        input.setHint("New category name");
+        // Adapter for displaying categories with optional delete
+        categoryAdapter = new CategoryAdapter(new ArrayList<>(categories));
+        recyclerView.setAdapter(categoryAdapter);
 
-        // Wrap them in a layout
-        final android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
-        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
-        layout.addView(listView);
-        layout.addView(input);
-
-        builder.setView(layout);
+        // Remove the "EDIT CATEGORIES+" entry inside dialog list
+        categoryAdapter.removeEditOption();
 
         builder.setPositiveButton("Add", (dialog, which) -> {
-            String newCat = input.getText().toString().trim();
-            if (!newCat.isEmpty() &&
-                    !defaultCategories.contains(newCat) &&
-                    !userCategories.contains(newCat)) {
-                userCategories.add(newCat);
-                saveCategories();
-                updateCategorySpinner();
-                Toast.makeText(this, "Added: " + newCat, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Invalid or duplicate category", Toast.LENGTH_SHORT).show();
-            }
+            showAddCategoryDialog();
         });
 
         builder.setNegativeButton("Close", null);
 
         builder.show();
+    }
+
+    private void showAddCategoryDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Category");
+
+        final EditText input = new EditText(this);
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String newCategory = input.getText().toString().trim();
+            if (!newCategory.isEmpty() && !categories.contains(newCategory)) {
+                // Insert before "EDIT CATEGORIES+"
+                categories.add(categories.size() - 1, newCategory);
+                spinnerAdapter.notifyDataSetChanged();
+                Toast.makeText(this, "Category added", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Invalid or duplicate category", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    // ---------------- Nested RecyclerView Adapter ----------------
+    private class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+
+        private final List<String> dialogCategories;
+
+        CategoryAdapter(List<String> categories) {
+            this.dialogCategories = categories;
+        }
+
+        void removeEditOption() {
+            dialogCategories.remove("EDIT CATEGORIES+");
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public CategoryViewHolder onCreateViewHolder(@NonNull android.view.ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_category_edit, parent, false);
+            return new CategoryViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
+            String category = dialogCategories.get(position);
+            holder.bind(category);
+        }
+
+        @Override
+        public int getItemCount() {
+            return dialogCategories.size();
+        }
+
+        class CategoryViewHolder extends RecyclerView.ViewHolder {
+            private final android.widget.TextView textCategory;
+            private final android.widget.ImageView btnDelete;
+
+            CategoryViewHolder(@NonNull View itemView) {
+                super(itemView);
+                textCategory = itemView.findViewById(R.id.text_category);
+                btnDelete = itemView.findViewById(R.id.btn_delete);
+            }
+
+            void bind(String category) {
+                textCategory.setText(category);
+
+                if (defaultCategories.contains(category)) {
+                    btnDelete.setVisibility(View.GONE);
+                } else {
+                    btnDelete.setVisibility(View.VISIBLE);
+                    btnDelete.setOnClickListener(v -> {
+                        categories.remove(category);
+                        dialogCategories.remove(category);
+                        notifyDataSetChanged();
+                        spinnerAdapter.notifyDataSetChanged();
+                        Toast.makeText(AddExpenseActivity.this, "Category deleted", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        }
     }
 }
