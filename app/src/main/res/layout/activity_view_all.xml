@@ -62,7 +62,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingBottom="120dp"> <!-- reserve space so footer doesn’t overlap -->
 
         <LinearLayout
             android:id="@+id/expenses_container"
@@ -111,8 +112,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#CCCCCC" />
-
-            <!-- Add more rows dynamically in code later -->
         </LinearLayout>
     </ScrollView>
+
+    <!-- Fixed footer total -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="#E0E0E0"
+        android:layout_marginBottom="48dp"> <!-- raise footer above nav buttons -->
+
+        <TextView
+            android:id="@+id/tvTotalLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="Total Expense"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tvTotalAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:text="$0.00"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#000000" />
+    </LinearLayout>
 </LinearLayout>

@@ -7,7 +7,6 @@
 
     <!-- Top bar -->
     <TextView
-        android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
         android:gravity="center_vertical|start"
@@ -19,15 +18,271 @@
         android:textStyle="bold"
         android:background="#455A64" />
 
-    <!-- Placeholder body -->
-    <TextView
-        android:id="@+id/placeholder_text"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:text="(This will group expenses by date)"
-        android:textSize="16sp"
-        android:textColor="#444" />
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:id="@+id/datewise_container"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- First date banner -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:gravity="center_vertical|start"
+                android:paddingStart="8dp"
+                android:background="#FFDDC1"
+                android:text="15 Sep 2025"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Expense row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dinner with friends"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Food &amp; Drinks"
+                        android:textSize="13sp"
+                        android:textColor="#888888" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$45"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="#000000" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CCCCCC" />
+
+            <!-- Total for date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="Total Expense"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#B71C1C" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$45"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#B71C1C" />
+            </LinearLayout>
+
+            <!-- Second date banner -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:gravity="center_vertical|start"
+                android:paddingStart="8dp"
+                android:background="#FFDDC1"
+                android:text="14 Sep 2025"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Expense row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Grocery Shopping"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Groceries"
+                        android:textSize="13sp"
+                        android:textColor="#888888" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$80"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="#000000" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CCCCCC" />
+
+            <!-- Total for date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="Total Expense"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#B71C1C" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$80"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#B71C1C" />
+            </LinearLayout>
+
+            <!-- Third date banner -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:gravity="center_vertical|start"
+                android:paddingStart="8dp"
+                android:background="#FFDDC1"
+                android:text="13 Sep 2025"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- Expense row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Taxi to airport"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Transport"
+                        android:textSize="13sp"
+                        android:textColor="#888888" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$25"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="#000000" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CCCCCC" />
+
+            <!-- Total for date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="Total Expense"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#B71C1C" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$25"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#B71C1C" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
