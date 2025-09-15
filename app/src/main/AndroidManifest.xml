@@ -13,7 +13,6 @@
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".AboutActivity" android:exported="false" />
 
-
         <!-- Main launcher activity -->
         <activity
             android:name=".MainActivity"
@@ -24,31 +23,14 @@
             </intent-filter>
         </activity>
 
-        <!-- Add Expense activity -->
-        <activity
-            android:name=".AddExpenseActivity"
-            android:exported="false" />
+        <activity android:name=".AddExpenseActivity" android:exported="false" />
+        <activity android:name=".ViewMenuActivity" android:exported="false" />
 
-        <!-- View Menu activity -->
-        <activity
-            android:name=".ViewMenuActivity"
-            android:exported="false" />
-
-        <!-- Settings activity -->
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="false" />
-
-        <!-- About activity -->
-        <activity
-            android:name=".AboutActivity"
-            android:exported="false" />
-
-
-        <activity android:name=".ViewAllActivity" />
-
-
+        <!-- View screens -->
+        <activity android:name=".ViewAllActivity" android:exported="false" />
+        <activity android:name=".DateWiseActivity" android:exported="false" />
+        <activity android:name=".MonthWiseActivity" android:exported="false" />
+        <activity android:name=".CategoryWiseActivity" android:exported="false" />
 
     </application>
-
 </manifest>

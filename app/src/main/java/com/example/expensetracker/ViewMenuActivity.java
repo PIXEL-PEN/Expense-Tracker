@@ -19,21 +19,21 @@ public class ViewMenuActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // --- Date Wise ---
+        // --- Expenses Date Wise ---
         AppCompatButton btnDateWise = findViewById(R.id.btnDateWise);
         btnDateWise.setOnClickListener(v -> {
             Intent intent = new Intent(ViewMenuActivity.this, DateWiseActivity.class);
             startActivity(intent);
         });
 
-        // --- Month Wise ---
+        // --- Expenses Month Wise ---
         AppCompatButton btnMonthWise = findViewById(R.id.btnMonthWise);
         btnMonthWise.setOnClickListener(v -> {
             Intent intent = new Intent(ViewMenuActivity.this, MonthWiseActivity.class);
             startActivity(intent);
         });
 
-        // --- Category Wise ---
+        // --- Expenses Category Wise ---
         AppCompatButton btnCategoryWise = findViewById(R.id.btnCategoryWise);
         btnCategoryWise.setOnClickListener(v -> {
             Intent intent = new Intent(ViewMenuActivity.this, CategoryWiseActivity.class);
