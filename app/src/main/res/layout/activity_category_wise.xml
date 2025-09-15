@@ -7,7 +7,6 @@
 
     <!-- Top bar -->
     <TextView
-        android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
         android:gravity="center_vertical|start"
@@ -19,15 +18,151 @@
         android:textStyle="bold"
         android:background="#455A64" />
 
-    <!-- Placeholder body -->
-    <TextView
-        android:id="@+id/placeholder_text"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:text="(This will group expenses by category)"
-        android:textSize="16sp"
-        android:textColor="#444" />
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:id="@+id/categorywise_container"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Category banner -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center_vertical|start"
+                android:paddingStart="8dp"
+                android:background="@drawable/banner_gradient_mustard"
+                android:text="Groceries"
+                android:textColor="#000000"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:elevation="2dp"
+                android:shadowColor="#66000000"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="1" />
+
+            <!-- Expense row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Weekly shopping"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12 Sept 2025"
+                        android:textSize="13sp"
+                        android:textColor="#888888" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$200"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="#000000" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CCCCCC" />
+
+            <!-- Another expense row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Farmers market"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:textColor="#000000" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5 Sept 2025"
+                        android:textSize="13sp"
+                        android:textColor="#888888" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$50"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="#000000" />
+            </LinearLayout>
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#CCCCCC" />
+
+            <!-- Total for category -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="Total Expense"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#B71C1C" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="$250"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#B71C1C" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
