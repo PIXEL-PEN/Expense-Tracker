@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ECEFF1">
 
+    <!-- Top bar (matches your working spec: 96dp height + 32dp top padding) -->
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="View All (Placeholder)"
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:gravity="center_vertical|start"
+        android:paddingStart="16dp"
+        android:paddingTop="32dp"
+        android:text="View All Expenses"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#455A64" />
+        android:background="#455A64" />
+
+    <!-- Content area -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- Placeholder list body; swap in RecyclerView when ready -->
+        <TextView
+            android:id="@+id/placeholder_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="(This will list all saved expenses)"
+            android:textSize="16sp"
+            android:textColor="#444" />
+    </LinearLayout>
+
 </LinearLayout>
