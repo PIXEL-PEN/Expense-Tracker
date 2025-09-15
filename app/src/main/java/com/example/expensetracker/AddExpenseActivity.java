@@ -1,13 +1,15 @@
 package com.example.expensetracker;
 
-import android.content.DialogInterface;
+import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -15,14 +17,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class AddExpenseActivity extends AppCompatActivity {
 
     private Spinner spinnerCategory;
     private ArrayAdapter<String> spinnerAdapter;
+    private TextView textDate;
+    private Calendar selectedDate;
+
+    // SharedPreferences keys
+    private static final String PREFS_NAME = "ExpensePrefs";
+    private static final String KEY_USER_CATEGORIES = "UserCategories";
 
     // Default categories (fixed, cannot be deleted)
     private final List<String> defaultCategories = Arrays.asList(
@@ -34,7 +47,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             "Other"
     );
 
-    // Mutable categories list
+    // Mutable categories list (defaults + user + "EDIT CATEGORIES+")
     private final List<String> categories = new ArrayList<>();
     private CategoryAdapter categoryAdapter;
 
@@ -44,18 +57,29 @@ public class AddExpenseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_expense);
 
         spinnerCategory = findViewById(R.id.spinner_category);
+        textDate = findViewById(R.id.text_date);
 
-        // Initialize categories with defaults
-        categories.clear();
-        categories.addAll(defaultCategories);
+        // Load categories
+        loadCategories();
 
-        // Add special "EDIT CATEGORIES+" option at end
-        categories.add("EDIT CATEGORIES+");
+        // Custom adapter for spinner with bold salmon selected & normal dropdown
+        spinnerAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item_selected, categories) {
+            @Override
+            public View getDropDownView(int position, View convertView, android.view.ViewGroup parent) {
+                View view = getLayoutInflater().inflate(R.layout.spinner_item_dropdown, parent, false);
+                TextView tv = view.findViewById(R.id.spinner_dropdown_text);
+                tv.setText(getItem(position));
+                return view;
+            }
 
-        spinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                categories);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            @Override
+            public View getView(int position, View convertView, android.view.ViewGroup parent) {
+                View view = getLayoutInflater().inflate(R.layout.spinner_item_selected, parent, false);
+                TextView tv = view.findViewById(R.id.spinner_selected_text);
+                tv.setText(getItem(position));
+                return view;
+            }
+        };
         spinnerCategory.setAdapter(spinnerAdapter);
 
         spinnerCategory.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
@@ -64,7 +88,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                 String selected = categories.get(position);
                 if ("EDIT CATEGORIES+".equals(selected)) {
                     showEditCategoriesDialog();
-                    // Reset spinner to first item after opening dialog
                     spinnerCategory.setSelection(0);
                 }
             }
@@ -72,7 +95,59 @@ public class AddExpenseActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) { }
         });
+
+        // --- DATE SEEDING ---
+        selectedDate = Calendar.getInstance();
+        updateDateDisplay();
+
+        textDate.setOnClickListener(v -> {
+            int year = selectedDate.get(Calendar.YEAR);
+            int month = selectedDate.get(Calendar.MONTH);
+            int day = selectedDate.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog dpd = new DatePickerDialog(
+                    AddExpenseActivity.this,
+                    (view, y, m, d) -> {
+                        selectedDate.set(Calendar.YEAR, y);
+                        selectedDate.set(Calendar.MONTH, m);
+                        selectedDate.set(Calendar.DAY_OF_MONTH, d);
+                        updateDateDisplay();
+                    },
+                    year, month, day
+            );
+            dpd.show();
+        });
     }
+
+    private void updateDateDisplay() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
+        textDate.setText(sdf.format(selectedDate.getTime()));
+    }
+
+    // -------------------- Category Persistence --------------------
+
+    private void saveUserCategories(List<String> userCategories) {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        prefs.edit().putStringSet(KEY_USER_CATEGORIES, new HashSet<>(userCategories)).apply();
+    }
+
+    private List<String> loadUserCategoriesFromPrefs() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        Set<String> set = prefs.getStringSet(KEY_USER_CATEGORIES, new HashSet<>());
+        return new ArrayList<>(set);
+    }
+
+    private void loadCategories() {
+        categories.clear();
+        categories.addAll(defaultCategories);
+
+        List<String> userCategories = loadUserCategoriesFromPrefs();
+        categories.addAll(userCategories);
+
+        categories.add("EDIT CATEGORIES+");
+    }
+
+    // -------------------- Dialogs --------------------
 
     private void showEditCategoriesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -85,12 +160,10 @@ public class AddExpenseActivity extends AppCompatActivity {
         RecyclerView recyclerView = dialogView.findViewById(R.id.recycler_categories);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Adapter for displaying categories with optional delete
-        categoryAdapter = new CategoryAdapter(new ArrayList<>(categories));
+        List<String> dialogCategories = new ArrayList<>(categories);
+        dialogCategories.remove("EDIT CATEGORIES+");
+        categoryAdapter = new CategoryAdapter(dialogCategories);
         recyclerView.setAdapter(categoryAdapter);
-
-        // Remove the "EDIT CATEGORIES+" entry inside dialog list
-        categoryAdapter.removeEditOption();
 
         builder.setPositiveButton("Add", (dialog, which) -> {
             showAddCategoryDialog();
@@ -111,8 +184,8 @@ public class AddExpenseActivity extends AppCompatActivity {
         builder.setPositiveButton("Add", (dialog, which) -> {
             String newCategory = input.getText().toString().trim();
             if (!newCategory.isEmpty() && !categories.contains(newCategory)) {
-                // Insert before "EDIT CATEGORIES+"
                 categories.add(categories.size() - 1, newCategory);
+                saveUserCategories(getUserCategoriesOnly());
                 spinnerAdapter.notifyDataSetChanged();
                 Toast.makeText(this, "Category added", Toast.LENGTH_SHORT).show();
             } else {
@@ -124,18 +197,21 @@ public class AddExpenseActivity extends AppCompatActivity {
         builder.show();
     }
 
-    // ---------------- Nested RecyclerView Adapter ----------------
+    private List<String> getUserCategoriesOnly() {
+        List<String> userCategories = new ArrayList<>(categories);
+        userCategories.removeAll(defaultCategories);
+        userCategories.remove("EDIT CATEGORIES+");
+        return userCategories;
+    }
+
+    // ---------------- RecyclerView Adapter for Categories ----------------
+
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
         private final List<String> dialogCategories;
 
         CategoryAdapter(List<String> categories) {
             this.dialogCategories = categories;
-        }
-
-        void removeEditOption() {
-            dialogCategories.remove("EDIT CATEGORIES+");
-            notifyDataSetChanged();
         }
 
         @NonNull
@@ -177,6 +253,7 @@ public class AddExpenseActivity extends AppCompatActivity {
                     btnDelete.setOnClickListener(v -> {
                         categories.remove(category);
                         dialogCategories.remove(category);
+                        saveUserCategories(getUserCategoriesOnly());
                         notifyDataSetChanged();
                         spinnerAdapter.notifyDataSetChanged();
                         Toast.makeText(AddExpenseActivity.this, "Category deleted", Toast.LENGTH_SHORT).show();
