@@ -18,6 +18,7 @@
         android:textStyle="bold"
         android:background="#455A64" />
 
+    <!-- Form container -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -26,6 +27,7 @@
         android:gravity="center_horizontal"
         android:layout_marginTop="135dp">
 
+        <!-- Category spinner -->
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spinner_category"
             android:layout_width="match_parent"
@@ -35,10 +37,9 @@
             android:popupBackground="#FFFFFF"
             android:background="@drawable/spinner_with_arrow"
             android:paddingStart="12dp"
-            android:paddingEnd="44dp"/> <!-- was 36dp, bumped to 44 -->
+            android:paddingEnd="44dp"/>
 
-
-
+        <!-- Description -->
         <EditText
             android:id="@+id/edit_description"
             android:layout_width="match_parent"
@@ -46,6 +47,7 @@
             android:hint="Description"
             android:layout_marginBottom="16dp"/>
 
+        <!-- Amount -->
         <EditText
             android:id="@+id/edit_amount"
             android:layout_width="match_parent"
@@ -54,6 +56,7 @@
             android:inputType="numberDecimal"
             android:layout_marginBottom="16dp"/>
 
+        <!-- Date -->
         <TextView
             android:id="@+id/text_date"
             android:layout_width="match_parent"
@@ -61,11 +64,12 @@
             android:text="Select Date"
             android:padding="12dp"
             android:background="#FFDDC1"
-            android:textSize="17dp"
+            android:textSize="17sp"
             android:textStyle="bold"
             android:layout_marginBottom="24dp"
             android:gravity="center_vertical|start"/>
 
+        <!-- Save button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_save"
             android:layout_width="250dp"

@@ -1,90 +1,133 @@
 package com.example.expensetracker;
 
-import android.app.DatePickerDialog;
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class AddExpenseActivity extends AppCompatActivity {
 
     private Spinner spinnerCategory;
-    private EditText editDescription, editAmount;
-    private TextView textDate;
-    private AppCompatButton btnSave;
-    private Calendar selectedDate;
+    private ArrayAdapter<String> categoryAdapter;
+
+    private final List<String> defaultCategories = Arrays.asList(
+            "Groceries", "Transport", "Medical", "Clothing", "Household",
+            "Electronics", "Utilities", "Personal Care", "Subscriptions", "Travel", "Other"
+    );
+
+    private List<String> userCategories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
 
-        // Initialize views
         spinnerCategory = findViewById(R.id.spinner_category);
-        editDescription = findViewById(R.id.edit_description);
-        editAmount = findViewById(R.id.edit_amount);
-        textDate = findViewById(R.id.text_date);
-        btnSave = findViewById(R.id.btn_save);
 
-        // Set up spinner with custom layouts
-        String[] categories = {"Food", "Transport", "Entertainment", "Other"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                this,
-                R.layout.spinner_item_selected,
-                categories
-        ) {
+        loadCategories();
+        updateCategorySpinner();
+
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public android.view.View getDropDownView(int position, android.view.View convertView, android.view.ViewGroup parent) {
-                TextView tv = (TextView) getLayoutInflater().inflate(R.layout.spinner_item_dropdown, parent, false);
-                tv.setText(getItem(position));
-                return tv;
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = categoryAdapter.getItem(position);
+                if ("EDIT CATEGORIES+".equals(selected)) {
+                    openEditCategoriesDialog();
+                    // Reset selection to first item so we don’t stay stuck on the edit option
+                    spinnerCategory.setSelection(0);
+                }
             }
-        };
-        spinnerCategory.setAdapter(adapter);
 
-        // Initialize date to current
-        selectedDate = Calendar.getInstance();
-        updateDateDisplay();
-
-        // Open date picker on click
-        textDate.setOnClickListener(v -> {
-            int year = selectedDate.get(Calendar.YEAR);
-            int month = selectedDate.get(Calendar.MONTH);
-            int day = selectedDate.get(Calendar.DAY_OF_MONTH);
-
-            DatePickerDialog dpd = new DatePickerDialog(
-                    AddExpenseActivity.this,
-                    (view, y, m, d) -> {
-                        selectedDate.set(Calendar.YEAR, y);
-                        selectedDate.set(Calendar.MONTH, m);
-                        selectedDate.set(Calendar.DAY_OF_MONTH, d);
-                        updateDateDisplay();
-                    },
-                    year, month, day
-            );
-            dpd.show();
-        });
-
-        // Save button click (example)
-        btnSave.setOnClickListener(v -> {
-            String category = spinnerCategory.getSelectedItem().toString();
-            String description = editDescription.getText().toString();
-            String amount = editAmount.getText().toString();
-            String date = textDate.getText().toString();
-
-            // TODO: Save to database or file
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
-    private void updateDateDisplay() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
-        textDate.setText(sdf.format(selectedDate.getTime()));
+    private void updateCategorySpinner() {
+        List<String> allCategories = new ArrayList<>();
+        allCategories.addAll(defaultCategories);
+        allCategories.addAll(userCategories);
+        allCategories.add("EDIT CATEGORIES+");
+
+        categoryAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, allCategories);
+        spinnerCategory.setAdapter(categoryAdapter);
+    }
+
+    private void loadCategories() {
+        SharedPreferences prefs = getSharedPreferences("categories", MODE_PRIVATE);
+        Set<String> saved = prefs.getStringSet("userCategories", new HashSet<>());
+        userCategories = new ArrayList<>(saved);
+    }
+
+    private void saveCategories() {
+        SharedPreferences prefs = getSharedPreferences("categories", MODE_PRIVATE);
+        prefs.edit().putStringSet("userCategories", new HashSet<>(userCategories)).apply();
+    }
+
+    private void openEditCategoriesDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit Categories");
+
+        // Layout with list + input
+        final ListView listView = new ListView(this);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, userCategories);
+        listView.setAdapter(adapter);
+
+        // Long press to delete user category
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            String cat = userCategories.get(position);
+            userCategories.remove(position);
+            adapter.notifyDataSetChanged();
+            saveCategories();
+            updateCategorySpinner();
+            Toast.makeText(this, "Deleted: " + cat, Toast.LENGTH_SHORT).show();
+            return true;
+        });
+
+        // Input for adding new category
+        final EditText input = new EditText(this);
+        input.setHint("New category name");
+
+        // Wrap them in a layout
+        final android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.addView(listView);
+        layout.addView(input);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String newCat = input.getText().toString().trim();
+            if (!newCat.isEmpty() &&
+                    !defaultCategories.contains(newCat) &&
+                    !userCategories.contains(newCat)) {
+                userCategories.add(newCat);
+                saveCategories();
+                updateCategorySpinner();
+                Toast.makeText(this, "Added: " + newCat, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Invalid or duplicate category", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Close", null);
+
+        builder.show();
     }
 }
