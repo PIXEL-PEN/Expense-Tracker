@@ -3,88 +3,89 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ECEFF1">
+    android:background="#ECEFF1"
+    android:gravity="center_horizontal">
 
-    <!-- Top banner bar -->
+    <!-- Top bar -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:gravity="bottom|start"
+        android:gravity="center_vertical|start"
         android:paddingStart="16dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="32dp"
         android:text="Expense Tracker"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@android:color/white"
         android:background="#455A64" />
 
-    <!-- Button grid container (body remains unchanged) -->
-    <LinearLayout
-        android:orientation="vertical"
-        android:gravity="center"
+    <!-- Spacer above buttons -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp">
+        android:layout_height="0dp"
+        android:layout_weight="3" />
 
-        <!-- First row of buttons -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:gravity="center"
+    <!-- Add Expense -->
+    <LinearLayout
+        android:id="@+id/btnAdd"
+        android:orientation="horizontal"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/rounded_button"
+        android:padding="10dp"
+        android:layout_marginBottom="20dp">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp">
+            android:text="Add Expense"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="6dp" />
 
-            <Button
-                android:id="@+id/btn_add"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:text="Add"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#607D8B"
-                android:layout_margin="5dp"
-                android:elevation="4dp" />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_plus"
+            android:tint="@android:color/white"
+            android:layout_marginStart="18dp" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_view"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:text="View"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#607D8B"
-                android:layout_margin="5dp"
-                android:elevation="4dp" />
 
-        </LinearLayout>
+    <!-- View Expenses -->
+    <LinearLayout
+        android:id="@+id/btnView"
+        android:orientation="horizontal"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/rounded_button"
+        android:padding="10dp">
 
-        <!-- Second row of buttons -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:gravity="center"
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="View Expenses"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="6dp" />
 
-            <Button
-                android:id="@+id/btn_settings"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:text="Settings"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#607D8B"
-                android:layout_margin="5dp"
-                android:elevation="4dp" />
-
-            <Button
-                android:id="@+id/btn_about"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:text="About"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#607D8B"
-                android:layout_margin="5dp"
-                android:elevation="4dp" />
-
-        </LinearLayout>
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_eye"
+            android:tint="@android:color/white"
+            android:layout_marginStart="4dp" />
 
     </LinearLayout>
+
+    <!-- Spacer below buttons -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4" />
 
 </LinearLayout>
