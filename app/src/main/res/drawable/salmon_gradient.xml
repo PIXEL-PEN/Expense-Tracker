@@ -5,12 +5,8 @@
     <gradient
         android:startColor="#FFDDC1"
         android:endColor="#FFAB91"
-        android:angle="270" />
+        android:angle="270"
+        android:type="linear" />
 
-    <corners android:radius="8dp"/>
-    <padding
-        android:left="8dp"
-        android:top="8dp"
-        android:right="8dp"
-        android:bottom="8dp"/>
+    <corners android:radius="6dp" />
 </shape>
