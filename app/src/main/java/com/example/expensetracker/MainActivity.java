@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayout btnAdd = findViewById(R.id.btnAdd);
         LinearLayout btnView = findViewById(R.id.btnView);
-        ImageView btnSettings = findViewById(R.id.btnSettings);
+        ImageView gearIcon = findViewById(R.id.gearIcon);
 
         if (btnAdd != null) {
             btnAdd.setOnClickListener(v ->
@@ -30,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
             );
         }
 
-        if (btnSettings != null) {
-            btnSettings.setOnClickListener(v ->
+        if (gearIcon != null) {
+            gearIcon.setOnClickListener(v ->
                     startActivity(new Intent(MainActivity.this, SettingsActivity.class))
             );
         }
