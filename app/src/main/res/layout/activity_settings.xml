@@ -5,37 +5,20 @@
     android:layout_height="match_parent"
     android:background="#ECEFF1">
 
-    <!-- Top bar with title and about icon -->
-    <RelativeLayout
+    <!-- Top bar -->
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:background="#455A64"
+        android:gravity="center_vertical|start"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingTop="32dp"
+        android:text="Settings"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="#455A64" />
 
-        <TextView
-            android:id="@+id/topBarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|start"
-            android:paddingTop="32dp"
-            android:text="Settings"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/btnAbout"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="46dp"
-            android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_about"
-            android:contentDescription="About" />
-    </RelativeLayout>
-
-    <!-- Body placeholder -->
+    <!-- Body -->
     <LinearLayout
         android:orientation="vertical"
         android:gravity="center"
@@ -50,6 +33,14 @@
             android:textStyle="bold"
             android:textColor="#607D8B" />
 
+        <!-- Footer info instead of About screen -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Expense Tracker v1.0\n© PIXEL-PEN"
+            android:textSize="14sp"
+            android:textColor="#455A64"
+            android:gravity="center"/>
     </LinearLayout>
-
 </LinearLayout>
