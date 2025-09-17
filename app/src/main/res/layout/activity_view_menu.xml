@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ECEFF1">
+    android:background="#ECEFF1"
+    android:gravity="center_horizontal">
 
     <!-- Top bar -->
     <TextView
@@ -18,20 +19,19 @@
         android:textStyle="bold"
         android:background="#455A64" />
 
-    <!-- Spacer pushes buttons downward -->
+    <!-- Spacer above buttons -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="6"/>
+        android:layout_weight="2" />
 
-    <!-- Buttons container -->
+    <!-- Buttons -->
     <LinearLayout
         android:orientation="vertical"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:paddingHorizontal="32dp"
-        android:layout_marginBottom="48dp">
+        android:layout_marginTop="20dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnViewAll"
@@ -42,7 +42,8 @@
             android:text="View All"
             android:textColor="#FFFFFF"
             android:textAllCaps="false"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="19sp"
+            android:layout_marginBottom="16dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnDateWise"
@@ -50,10 +51,11 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@null"
-            android:text="Date Wise"
+            android:text="View by Date"
             android:textColor="#FFFFFF"
             android:textAllCaps="false"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="19sp"
+            android:layout_marginBottom="16dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnMonthWise"
@@ -61,10 +63,11 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@null"
-            android:text="Month Wise"
+            android:text="View by Month"
             android:textColor="#FFFFFF"
             android:textAllCaps="false"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="19sp"
+            android:layout_marginBottom="16dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnCategoryWise"
@@ -72,14 +75,16 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_button"
             android:backgroundTint="@null"
-            android:text="Category Wise"
+            android:text="View by Category"
             android:textColor="#FFFFFF"
-            android:textAllCaps="false"/>
+            android:textAllCaps="false"
+            android:textSize="19sp" />
     </LinearLayout>
 
-    <!-- Bottom spacer -->
+    <!-- Spacer below buttons -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"/>
+        android:layout_weight="3" />
+
 </LinearLayout>

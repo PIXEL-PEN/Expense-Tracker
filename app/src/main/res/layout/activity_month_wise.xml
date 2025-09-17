@@ -12,11 +12,12 @@
         android:gravity="center_vertical|start"
         android:paddingStart="16dp"
         android:paddingTop="32dp"
-        android:text="Expenses Month Wise"
+        android:text="Expenses by Month"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         android:background="#455A64" />
+
 
     <ScrollView
         android:layout_width="match_parent"
