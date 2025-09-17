@@ -12,32 +12,37 @@ public class ViewMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_menu);
 
-        // --- View All ---
         AppCompatButton btnViewAll = findViewById(R.id.btnViewAll);
-        btnViewAll.setOnClickListener(v -> {
-            Intent intent = new Intent(ViewMenuActivity.this, ViewAllActivity.class);
-            startActivity(intent);
-        });
-
-        // --- Expenses Date Wise ---
         AppCompatButton btnDateWise = findViewById(R.id.btnDateWise);
-        btnDateWise.setOnClickListener(v -> {
-            Intent intent = new Intent(ViewMenuActivity.this, DateWiseActivity.class);
-            startActivity(intent);
-        });
-
-        // --- Expenses Month Wise ---
         AppCompatButton btnMonthWise = findViewById(R.id.btnMonthWise);
-        btnMonthWise.setOnClickListener(v -> {
-            Intent intent = new Intent(ViewMenuActivity.this, MonthWiseActivity.class);
-            startActivity(intent);
-        });
-
-        // --- Expenses Category Wise ---
         AppCompatButton btnCategoryWise = findViewById(R.id.btnCategoryWise);
-        btnCategoryWise.setOnClickListener(v -> {
-            Intent intent = new Intent(ViewMenuActivity.this, CategoryWiseActivity.class);
-            startActivity(intent);
-        });
+
+        if (btnViewAll != null) {
+            btnViewAll.setOnClickListener(v -> {
+                Intent intent = new Intent(ViewMenuActivity.this, ViewAllActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        if (btnDateWise != null) {
+            btnDateWise.setOnClickListener(v -> {
+                Intent intent = new Intent(ViewMenuActivity.this, DateWiseActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        if (btnMonthWise != null) {
+            btnMonthWise.setOnClickListener(v -> {
+                Intent intent = new Intent(ViewMenuActivity.this, MonthWiseActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        if (btnCategoryWise != null) {
+            btnCategoryWise.setOnClickListener(v -> {
+                Intent intent = new Intent(ViewMenuActivity.this, CategoryWiseActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 }

@@ -5,18 +5,35 @@
     android:layout_height="match_parent"
     android:background="#ECEFF1">
 
-    <!-- Top bar -->
-    <TextView
+    <!-- Top bar with title and about icon -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:gravity="center_vertical|start"
+        android:background="#455A64"
         android:paddingStart="16dp"
-        android:paddingTop="32dp"
-        android:text="Settings"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:background="#455A64" />
+        android:paddingEnd="16dp">
+
+        <TextView
+            android:id="@+id/topBarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|start"
+            android:paddingTop="32dp"
+            android:text="Settings"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnAbout"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="46dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_about"
+            android:contentDescription="About" />
+    </RelativeLayout>
 
     <!-- Body placeholder -->
     <LinearLayout
