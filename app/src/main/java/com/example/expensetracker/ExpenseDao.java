@@ -12,18 +12,18 @@ public interface ExpenseDao {
     void insert(Expense expense);
 
     // Used by ViewAllActivity
-    @Query("SELECT * FROM expenses ORDER BY date DESC")
+    @Query("SELECT * FROM expenses ORDER BY date ASC")
     List<Expense> getAll();
 
-    // Optional helpers for other screens
-    @Query("SELECT * FROM expenses WHERE category = :category ORDER BY date DESC")
+    // By category, oldest to newest
+    @Query("SELECT * FROM expenses WHERE category = :category ORDER BY date ASC")
     List<Expense> getByCategory(String category);
 
-    // Matches exact date string (e.g., "15 Sep. 2025")
-    @Query("SELECT * FROM expenses WHERE date = :date ORDER BY rowid DESC")
+    // Matches exact date string, oldest to newest
+    @Query("SELECT * FROM expenses WHERE date = :date ORDER BY id ASC")
     List<Expense> getByExactDate(String date);
 
-    // Prefix match (e.g., "Sep. 2025" if you store that format)
-    @Query("SELECT * FROM expenses WHERE date LIKE :prefix || '%' ORDER BY rowid DESC")
+    // Prefix match (e.g., "Sep. 2025"), oldest to newest
+    @Query("SELECT * FROM expenses WHERE date LIKE :prefix || '%' ORDER BY id ASC")
     List<Expense> getByDatePrefix(String prefix);
 }
