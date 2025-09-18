@@ -7,139 +7,31 @@
 
     <!-- Top bar -->
     <TextView
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:gravity="center_vertical|start"
+        android:gravity="bottom|start"
         android:paddingStart="16dp"
-        android:paddingTop="32dp"
+        android:paddingBottom="16dp"
         android:text="Expenses by Month"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         android:background="#455A64" />
 
-
+    <!-- Scrollable container -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/monthwise_container"
+            android:id="@+id/expenses_container_month"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!-- Month banner -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:gravity="center_vertical|start"
-                android:paddingStart="8dp"
-                android:background="@drawable/banner_gradient_turquoise"
-                android:text="September - 2025"
-                android:textColor="#000000"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:elevation="2dp"
-                android:shadowColor="#66000000"
-                android:shadowDx="0"
-                android:shadowDy="1"
-                android:shadowRadius="1" />
-
-            <!-- Expense row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:text="15 Sept 2025"
-                    android:textStyle="bold"
-                    android:textSize="15sp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:text="$120"
-                    android:textStyle="bold"
-                    android:textSize="15sp"
-                    android:textColor="#000000" />
-            </LinearLayout>
-
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#CCCCCC" />
-
-            <!-- Another expense row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:text="10 Sept 2025"
-                    android:textStyle="bold"
-                    android:textSize="15sp"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:text="$75"
-                    android:textStyle="bold"
-                    android:textSize="15sp"
-                    android:textColor="#000000" />
-            </LinearLayout>
-
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#CCCCCC" />
-
-            <!-- Total for month -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:layout_marginBottom="12dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:text="Total Expense"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#B71C1C" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:text="$195"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="#B71C1C" />
-            </LinearLayout>
-
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"/>
     </ScrollView>
+
 </LinearLayout>
