@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -56,13 +57,14 @@ public class AddExpenseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
 
+        // Spinner + Date
         spinnerCategory = findViewById(R.id.spinner_category);
         textDate = findViewById(R.id.text_date);
 
         // Load categories
         loadCategories();
 
-        // Custom adapter for spinner with bold salmon selected & normal dropdown
+        // Custom adapter for spinner
         spinnerAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item_selected, categories) {
             @Override
             public View getDropDownView(int position, View convertView, android.view.ViewGroup parent) {
@@ -91,7 +93,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                     spinnerCategory.setSelection(0);
                 }
             }
-
             @Override
             public void onNothingSelected(android.widget.AdapterView<?> parent) { }
         });
@@ -117,11 +118,105 @@ public class AddExpenseActivity extends AppCompatActivity {
             );
             dpd.show();
         });
+
+        // --- SAVE BUTTON ---
+        // Try common button IDs so you don't have to rename XML right now
+        Button btnSave = findButtonByAnyId("btn_save", "button_save", "saveButton");
+        if (btnSave != null) {
+            btnSave.setOnClickListener(v -> {
+                // Try multiple possible IDs for description/amount so this works with your current XML
+                EditText etDescription = findEditByAnyId(
+                        "input_description", "edit_description", "et_description",
+                        "description", "inputDesc", "editTextDescription"
+                );
+                EditText etAmount = findEditByAnyId(
+                        "input_amount", "edit_amount", "et_amount",
+                        "amount", "inputAmount", "editTextAmount"
+                );
+
+                if (etDescription == null || etAmount == null) {
+                    Toast.makeText(
+                            AddExpenseActivity.this,
+                            "Layout is missing required Description/Amount fields (IDs).",
+                            Toast.LENGTH_LONG
+                    ).show();
+                    return;
+                }
+
+                String category = spinnerCategory.getSelectedItem().toString();
+                String description = etDescription.getText().toString().trim();
+                String amountStr = etAmount.getText().toString().trim();
+                String date = textDate.getText().toString();
+
+                if (description.isEmpty() || amountStr.isEmpty()) {
+                    Toast.makeText(AddExpenseActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                double amount;
+                try {
+                    amount = Double.parseDouble(amountStr);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(AddExpenseActivity.this, "Invalid amount", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Create Expense object
+                Expense expense = new Expense();
+                expense.category = category;
+                expense.description = description;
+                expense.amount = amount;
+                expense.date = date;
+
+                // Insert into DB
+                ExpenseDatabase.getDatabase(this).expenseDao().insert(expense);
+
+                Toast.makeText(this, "Expense saved to database", Toast.LENGTH_SHORT).show();
+
+                // Reset inputs
+                etDescription.setText("");
+                etAmount.setText("");
+                spinnerCategory.setSelection(0);
+                selectedDate = Calendar.getInstance();
+                updateDateDisplay();
+            });
+        } else {
+            Toast.makeText(this, "Save button not found in layout.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void updateDateDisplay() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
         textDate.setText(sdf.format(selectedDate.getTime()));
+    }
+
+    // -------------------- Helpers: resilient ID lookup --------------------
+
+    private int getIdByName(String name) {
+        if (name == null) return 0;
+        return getResources().getIdentifier(name, "id", getPackageName());
+    }
+
+    private EditText findEditByAnyId(String... names) {
+        for (String n : names) {
+            int id = getIdByName(n);
+            if (id != 0) {
+                View v = findViewById(id);
+                if (v instanceof EditText) return (EditText) v;
+            }
+        }
+        return null;
+    }
+
+    private Button findButtonByAnyId(String... names) {
+        for (String n : names) {
+            int id = getIdByName(n);
+            if (id != 0) {
+                View v = findViewById(id);
+                if (v instanceof Button) return (Button) v;
+            }
+        }
+        return null;
     }
 
     // -------------------- Category Persistence --------------------
@@ -147,7 +242,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         categories.add("EDIT CATEGORIES+");
     }
 
-    // -------------------- Dialogs --------------------
+    // ---------------- Dialogs ----------------
 
     private void showEditCategoriesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -165,12 +260,8 @@ public class AddExpenseActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(dialogCategories);
         recyclerView.setAdapter(categoryAdapter);
 
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            showAddCategoryDialog();
-        });
-
+        builder.setPositiveButton("Add", (dialog, which) -> showAddCategoryDialog());
         builder.setNegativeButton("Close", null);
-
         builder.show();
     }
 
@@ -207,7 +298,6 @@ public class AddExpenseActivity extends AppCompatActivity {
     // ---------------- RecyclerView Adapter for Categories ----------------
 
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
-
         private final List<String> dialogCategories;
 
         CategoryAdapter(List<String> categories) {
@@ -234,7 +324,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         }
 
         class CategoryViewHolder extends RecyclerView.ViewHolder {
-            private final android.widget.TextView textCategory;
+            private final TextView textCategory;
             private final android.widget.ImageView btnDelete;
 
             CategoryViewHolder(@NonNull View itemView) {

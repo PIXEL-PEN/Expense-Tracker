@@ -5,27 +5,26 @@
     android:layout_height="match_parent"
     android:background="#ECEFF1">
 
-    <!-- Top bar -->
     <TextView
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:gravity="center_vertical|start"
+        android:gravity="bottom|start"
         android:paddingStart="16dp"
-        android:paddingTop="32dp"
+        android:paddingBottom="16dp"
         android:text="All Expenses"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         android:background="#455A64" />
 
-
-    <!-- Header banner -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:orientation="horizontal"
         android:background="#D3D3D3"
-        android:paddingHorizontal="8dp">
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
 
         <TextView
             android:layout_width="0dp"
@@ -58,71 +57,24 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Scrollable content area -->
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_expenses"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingBottom="120dp"> <!-- reserve space so footer doesn’t overlap -->
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        android:background="@android:color/white" />
 
-        <LinearLayout
-            android:id="@+id/expenses_container"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!-- Example dummy row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp"
-                android:paddingHorizontal="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:text="Groceries"
-                    android:textColor="#000000"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="15 Sep 2025"
-                    android:textColor="#000000"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:text="$50"
-                    android:textColor="#000000"
-                    android:textSize="15sp" />
-            </LinearLayout>
-
-            <!-- Divider -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#CCCCCC" />
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- Fixed footer total -->
     <LinearLayout
+        android:id="@+id/footer_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="12dp"
+        android:padding="16dp"
         android:background="#E0E0E0"
-        android:layout_marginBottom="48dp"> <!-- raise footer above nav buttons -->
+        android:elevation="4dp">
 
         <TextView
             android:id="@+id/tvTotalLabel"
