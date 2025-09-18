@@ -57,7 +57,7 @@ public class DateWiseActivity extends AppCompatActivity {
             ));
             banner.setBackgroundColor(0xFFD3D3D3);
             banner.setText(date);
-            banner.setTextSize(15);
+            banner.setTextSize(16);
             banner.setTypeface(Typeface.DEFAULT_BOLD);
             banner.setTextColor(0xFF000000); // solid black
             banner.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START);
