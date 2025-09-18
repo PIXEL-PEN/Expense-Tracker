@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +27,7 @@ public class CategoryWiseActivity extends AppCompatActivity {
         expensesContainer = findViewById(R.id.categorywise_container);
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        // Get all expenses (oldest → newest)
+        // Get all expenses
         List<Expense> allExpenses = ExpenseDatabase
                 .getDatabase(this)
                 .expenseDao()
@@ -35,7 +36,9 @@ public class CategoryWiseActivity extends AppCompatActivity {
         // Group by category
         Map<String, List<Expense>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            grouped.putIfAbsent(e.category, new java.util.ArrayList<>());
+            if (!grouped.containsKey(e.category)) {
+                grouped.put(e.category, new ArrayList<>());
+            }
             grouped.get(e.category).add(e);
         }
 
@@ -52,7 +55,7 @@ public class CategoryWiseActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     dp(36)
             ));
-            banner.setBackgroundColor(0xFFD3D3D3);
+            banner.setBackgroundColor(0xFFE1C699);
             banner.setText(category);
             banner.setTextSize(16);
             banner.setTypeface(Typeface.DEFAULT_BOLD);
@@ -61,61 +64,31 @@ public class CategoryWiseActivity extends AppCompatActivity {
             banner.setPadding(dp(16), 0, 0, 0);
             expensesContainer.addView(banner);
 
-            double categoryTotal = 0.0;
+            double total = 0.0;
 
-            // Rows for this category
-            for (int i = 0; i < items.size(); i++) {
-                Expense e = items.get(i);
+            // Rows for each expense in the category
+            for (Expense e : items) {
+                View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
-                LinearLayout row = new LinearLayout(this);
-                row.setOrientation(LinearLayout.HORIZONTAL);
-                row.setPadding(dp(12), dp(6), dp(12), dp(6));
+                TextView textDescription = row.findViewById(R.id.text_description);
+                TextView textCategory    = row.findViewById(R.id.text_category);
+                TextView textAmount      = row.findViewById(R.id.text_amount);
 
-                // Left column: description + date
-                LinearLayout leftCol = new LinearLayout(this);
-                leftCol.setOrientation(LinearLayout.VERTICAL);
-                leftCol.setLayoutParams(new LinearLayout.LayoutParams(
-                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+                textDescription.setText(e.description);
+                textCategory.setText(e.date); // show the date under description
+                textAmount.setText(String.format(Locale.ENGLISH, "$%.2f", e.amount));
 
-                TextView descriptionTv = new TextView(this);
-                descriptionTv.setText(e.description);
-                descriptionTv.setTextSize(15);
-                descriptionTv.setTypeface(Typeface.DEFAULT_BOLD);
-                descriptionTv.setTextColor(0xFF000000);
-
-                TextView dateTv = new TextView(this);
-                dateTv.setText(e.date);
-                dateTv.setTextSize(13);
-                dateTv.setTextColor(0xFF666666);
-
-                leftCol.addView(descriptionTv);
-                leftCol.addView(dateTv);
-
-                // Right column: amount
-                TextView amountTv = new TextView(this);
-                amountTv.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                amountTv.setText(String.format(Locale.ENGLISH, "$%.2f", e.amount));
-                amountTv.setTextSize(15);
-                amountTv.setTypeface(Typeface.DEFAULT_BOLD);
-                amountTv.setTextColor(0xFF000000);
-
-                row.addView(leftCol);
-                row.addView(amountTv);
                 expensesContainer.addView(row);
 
-                // Divider
-                if (i < items.size() - 1) {
-                    View divider = new View(this);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, 1);
-                    divider.setLayoutParams(lp);
-                    divider.setBackgroundColor(0xFFCCCCCC);
-                    expensesContainer.addView(divider);
-                }
+                // Always add divider after each row
+                View divider = new View(this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                divider.setLayoutParams(lp);
+                divider.setBackgroundColor(0xFF888888);
+                expensesContainer.addView(divider);
 
-                categoryTotal += e.amount;
+                total += e.amount;
             }
 
             // TOTAL row
@@ -131,17 +104,17 @@ public class CategoryWiseActivity extends AppCompatActivity {
             label.setTypeface(Typeface.DEFAULT_BOLD);
             label.setTextColor(0xFFB71C1C);
 
-            TextView totalAmountTv = new TextView(this);
-            totalAmountTv.setLayoutParams(new LinearLayout.LayoutParams(
+            TextView amountTv = new TextView(this);
+            amountTv.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
-            totalAmountTv.setText(String.format(Locale.ENGLISH, "$%.2f", categoryTotal));
-            totalAmountTv.setTextSize(18);
-            totalAmountTv.setTypeface(Typeface.DEFAULT_BOLD);
-            totalAmountTv.setTextColor(0xFFB71C1C);
+            amountTv.setText(String.format(Locale.ENGLISH, "$%.2f", total));
+            amountTv.setTextSize(18);
+            amountTv.setTypeface(Typeface.DEFAULT_BOLD);
+            amountTv.setTextColor(0xFFB71C1C);
 
             totalRow.addView(label);
-            totalRow.addView(totalAmountTv);
+            totalRow.addView(amountTv);
             expensesContainer.addView(totalRow);
         }
     }
