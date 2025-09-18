@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="#ECEFF1">
 
+    <!-- Top bar -->
     <TextView
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -18,35 +19,20 @@
         android:textStyle="bold"
         android:background="#455A64" />
 
-    <TextView
-        android:id="@+id/bannerDate"
+    <!-- Scrollable list -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:gravity="center_vertical|start"
-        android:paddingStart="16dp"
-        android:text="18 Sep. 2025"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="#D3D3D3" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFFFFF"
-        android:paddingBottom="64dp">
-
-        <ScrollView
+        <LinearLayout
+            android:id="@+id/expenses_container_date"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:paddingBottom="80dp" />  <!-- ✅ reserve space above nav bar -->
+    </ScrollView>
 
-            <LinearLayout
-                android:id="@+id/expenses_container_date"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </ScrollView>
-    </LinearLayout>
 </LinearLayout>
