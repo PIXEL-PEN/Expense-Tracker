@@ -7,19 +7,18 @@
 
     <!-- Top bar -->
     <TextView
-        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
-        android:gravity="bottom|start"
+        android:gravity="center_vertical|start"
         android:paddingStart="16dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="32dp"
         android:text="Expenses by Month"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         android:background="#455A64" />
 
-    <!-- Scrollable container -->
+    <!-- Scrollable list -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -31,7 +30,8 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"/>
-    </ScrollView>
+            android:paddingBottom="80dp"
+            android:background="#FFFFFF" />
 
+    </ScrollView>
 </LinearLayout>
