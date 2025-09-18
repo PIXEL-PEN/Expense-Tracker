@@ -27,15 +27,24 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/gearIcon"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+        <!-- Gear button container -->
+        <LinearLayout
+            android:id="@+id/btnGear"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="46dp"
+            android:layout_marginTop="40dp"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_gear_custom"
-            android:contentDescription="Settings" />
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_gear_custom"
+                android:contentDescription="Settings" />
+        </LinearLayout>
 
     </RelativeLayout>
 

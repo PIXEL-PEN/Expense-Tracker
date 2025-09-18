@@ -27,4 +27,11 @@ public interface ExpenseDao {
     // Prefix match (e.g., "Sep 2025"), oldest → newest
     @Query("SELECT * FROM expenses WHERE date LIKE :prefix || '%' ORDER BY date ASC")
     List<Expense> getByDatePrefix(String prefix);
+
+    @Query("DELETE FROM expenses")
+    void clearAll();
+
+
+
+
 }
