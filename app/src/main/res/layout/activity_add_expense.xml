@@ -36,18 +36,18 @@
             android:spinnerMode="dropdown"
             android:popupBackground="#FFFFFF"
             android:background="@drawable/spinner_background_salmon"
-
             android:paddingStart="12dp"
             android:paddingEnd="44dp"
             android:elevation="4dp"
             android:translationZ="2dp"/>
+
 
         <!-- Description -->
         <EditText
             android:id="@+id/edit_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Item"
+            android:hint="Description"
             android:layout_marginBottom="16dp" />
 
         <!-- Amount -->
