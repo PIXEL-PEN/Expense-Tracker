@@ -119,13 +119,13 @@ public class SettingsActivity extends AppCompatActivity {
             public void onNothingSelected(android.widget.AdapterView<?> parent) {}
         });
 
-        // ---------------- Export Button ----------------
+        // ---------------- Export Button (CSV to storage, HTML via email) ----------------
         findViewById(R.id.btn_export).setOnClickListener(v -> {
             new AlertDialog.Builder(this)
                     .setTitle("Export Data")
                     .setMessage("Choose export method:")
-                    .setPositiveButton("Storage (CSV)", (dialog, which) -> exportToStorage())
-                    .setNegativeButton("Email", (dialog, which) -> exportAndEmail())
+                    .setPositiveButton("Storage (CSV)", (dialog, which) -> exportCsvToStorage())
+                    .setNegativeButton("Email (HTML)", (dialog, which) -> exportHtmlAndEmail())
                     .setNeutralButton("Cancel", null)
                     .show();
         });
@@ -144,43 +144,22 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    // ---------------- Helper Methods ----------------
+    // ---------------- Helpers ----------------
 
-    private void exportToStorage() {
+    private void exportCsvToStorage() {
         try {
             File file = new File(getExternalFilesDir(null), "expenses.csv");
-            FileWriter writer = new FileWriter(file);
-
-            List<Expense> expenses = ExpenseDatabase.getDatabase(this).expenseDao().getAll();
-            for (Expense e : expenses) {
-                writer.append(e.category).append(",")
-                        .append(e.description).append(",")
-                        .append(String.valueOf(e.amount)).append(",")
-                        .append(e.date).append("\n");
-            }
-            writer.flush();
-            writer.close();
-
-            Toast.makeText(this, "Exported to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            writeCsv(file);
+            Toast.makeText(this, "Exported CSV to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             Toast.makeText(this, "Export failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void exportAndEmail() {
+    private void exportHtmlAndEmail() {
         try {
-            File file = new File(getExternalFilesDir(null), "expenses.csv");
-            FileWriter writer = new FileWriter(file);
-
-            List<Expense> expenses = ExpenseDatabase.getDatabase(this).expenseDao().getAll();
-            for (Expense e : expenses) {
-                writer.append(e.category).append(",")
-                        .append(e.description).append(",")
-                        .append(String.valueOf(e.amount)).append(",")
-                        .append(e.date).append("\n");
-            }
-            writer.flush();
-            writer.close();
+            File file = new File(getExternalFilesDir(null), "expenses.html");
+            writeHtml(file);
 
             android.net.Uri uri = androidx.core.content.FileProvider.getUriForFile(
                     this,
@@ -189,8 +168,8 @@ public class SettingsActivity extends AppCompatActivity {
             );
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("text/csv");
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Expense Export");
+            emailIntent.setType("text/html");
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Expense Export (HTML)");
             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
             emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -199,5 +178,67 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (IOException e) {
             Toast.makeText(this, "Export failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void writeCsv(File file) throws IOException {
+        List<Expense> expenses = ExpenseDatabase.getDatabase(this).expenseDao().getAll();
+        FileWriter writer = new FileWriter(file);
+        writer.append("Category,Description,Amount,Date\n");
+        for (Expense e : expenses) {
+            writer.append(escapeCsv(e.category)).append(",")
+                    .append(escapeCsv(e.description)).append(",")
+                    .append(String.valueOf(e.amount)).append(",")
+                    .append(escapeCsv(e.date)).append("\n");
+        }
+        writer.flush();
+        writer.close();
+    }
+
+    private void writeHtml(File file) throws IOException {
+        List<Expense> expenses = ExpenseDatabase.getDatabase(this).expenseDao().getAll();
+        StringBuilder sb = new StringBuilder();
+        sb.append("<!doctype html><html><head><meta charset='utf-8'>")
+                .append("<meta name='viewport' content='width=device-width, initial-scale=1'>")
+                .append("<style>")
+                .append("body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:16px;background:#fafafa;color:#263238;}")
+                .append("h1{font-size:20px;margin:0 0 12px 0;}")
+                .append("table{width:100%;border-collapse:collapse;background:white;}")
+                .append("th,td{padding:10px;border:1px solid #CFD8DC;text-align:left;font-size:14px;}")
+                .append("th{background:#ECEFF1;font-weight:700;}")
+                .append("tr:nth-child(even){background:#F7F9FA;}")
+                .append("</style></head><body>")
+                .append("<h1>Expense Export</h1>")
+                .append("<table><thead><tr>")
+                .append("<th>Category</th><th>Description</th><th>Amount</th><th>Date</th>")
+                .append("</tr></thead><tbody>");
+
+        for (Expense e : expenses) {
+            sb.append("<tr>")
+                    .append("<td>").append(html(e.category)).append("</td>")
+                    .append("<td>").append(html(e.description)).append("</td>")
+                    .append("<td>").append(e.amount).append("</td>")
+                    .append("<td>").append(html(e.date)).append("</td>")
+                    .append("</tr>");
+        }
+        sb.append("</tbody></table></body></html>");
+
+        FileWriter writer = new FileWriter(file);
+        writer.write(sb.toString());
+        writer.flush();
+        writer.close();
+    }
+
+    private String escapeCsv(String s) {
+        if (s == null) return "";
+        boolean needQuotes = s.contains(",") || s.contains("\"") || s.contains("\n") || s.contains("\r");
+        String out = s.replace("\"", "\"\"");
+        return needQuotes ? "\"" + out + "\"" : out;
+    }
+
+    private String html(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 }
