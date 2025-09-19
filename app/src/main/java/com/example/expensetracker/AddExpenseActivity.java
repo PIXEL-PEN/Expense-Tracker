@@ -120,11 +120,9 @@ public class AddExpenseActivity extends AppCompatActivity {
         });
 
         // --- SAVE BUTTON ---
-        // Try common button IDs so you don't have to rename XML right now
         Button btnSave = findButtonByAnyId("btn_save", "button_save", "saveButton");
         if (btnSave != null) {
             btnSave.setOnClickListener(v -> {
-                // Try multiple possible IDs for description/amount so this works with your current XML
                 EditText etDescription = findEditByAnyId(
                         "input_description", "edit_description", "et_description",
                         "description", "inputDesc", "editTextDescription"
@@ -182,6 +180,17 @@ public class AddExpenseActivity extends AppCompatActivity {
             });
         } else {
             Toast.makeText(this, "Save button not found in layout.", Toast.LENGTH_LONG).show();
+        }
+
+        // --- VIEW BUTTON ---
+        Button btnView = findButtonByAnyId("btn_view");
+        if (btnView != null) {
+            btnView.setOnClickListener(v -> {
+                startActivity(new android.content.Intent(
+                        AddExpenseActivity.this,
+                        ViewMenuActivity.class
+                ));
+            });
         }
     }
 
