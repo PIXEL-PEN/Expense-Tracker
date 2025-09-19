@@ -1,46 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ECEFF1">
 
-    <!-- Top bar -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:gravity="center_vertical|start"
-        android:paddingStart="16dp"
-        android:paddingTop="32dp"
-        android:text="Settings"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:background="#455A64" />
-
-    <!-- Body -->
     <LinearLayout
         android:orientation="vertical"
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
+        <!-- Top bar -->
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Settings Placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:gravity="center_vertical|start"
+            android:paddingStart="16dp"
+            android:paddingTop="32dp"
+            android:text="Settings"
+            android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#607D8B" />
+            android:background="#455A64" />
 
-        <!-- Footer info instead of About screen -->
+        <!-- Select Currency -->
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Select Currency"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="#CFD8DC" />
+
+        <Spinner
+            android:id="@+id/spinner_currency"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/field_gradient_salmon"
+            android:paddingStart="12dp"
+            android:paddingEnd="44dp" />
+
+        <!-- Date Format -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Date Format"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="#CFD8DC" />
+
+        <Spinner
+            android:id="@+id/spinner_date_format"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/field_gradient_salmon"
+            android:paddingStart="12dp"
+            android:paddingEnd="44dp" />
+
+        <!-- Export Database -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Export Database"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="#CFD8DC" />
+
+        <Button
+            android:id="@+id/btn_export"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Expense Tracker v1.0\n© PIXEL-PEN"
-            android:textSize="14sp"
-            android:textColor="#455A64"
-            android:gravity="center"/>
+            android:text="Export"
+            android:layout_margin="16dp"
+            android:background="@drawable/rounded_button"
+            android:textColor="@android:color/white" />
+
+        <!-- Reset Database -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Reset Database"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="#CFD8DC" />
+
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset"
+            android:layout_margin="16dp"
+            android:background="@drawable/rounded_button"
+            android:textColor="@android:color/white" />
+
+        <!-- About -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="About"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="#CFD8DC" />
+
+        <TextView
+            android:id="@+id/text_about"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:padding="24dp"
+            android:text="Expense Tracker v1.0\n\n© PIXEL-PEN\n\nA simple, offline expense management app with export and reset functions."
+            android:textSize="16sp"
+            android:gravity="top|start" />
+
     </LinearLayout>
-</LinearLayout>
+</ScrollView>
