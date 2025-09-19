@@ -14,12 +14,16 @@ import java.util.List;
 public class SettingsActivity extends AppCompatActivity {
 
     private Spinner spinnerCurrency;
+    private Spinner spinnerDateFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+
+        // ---- Currency Spinner ----
         spinnerCurrency = findViewById(R.id.spinner_currency);
 
         final List<String> currencies = Arrays.asList(
@@ -37,41 +41,71 @@ public class SettingsActivity extends AppCompatActivity {
                 "MYR — Malaysian Ringgit (RM)"
         );
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        ArrayAdapter<String> adapterCurrency = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
                 currencies
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCurrency.setAdapter(adapter);
+        adapterCurrency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCurrency.setAdapter(adapterCurrency);
 
-        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String savedCode = prefs.getString("currency_code", "THB");
-
-        int restoredIndex = 0;
+        int restoredCurrencyIndex = 0;
         for (int i = 0; i < currencies.size(); i++) {
-            String label = currencies.get(i);
-            if (label.startsWith(savedCode + " ")) {
-                restoredIndex = i;
+            if (currencies.get(i).startsWith(savedCode + " ")) {
+                restoredCurrencyIndex = i;
                 break;
             }
         }
-        spinnerCurrency.setSelection(restoredIndex, false);
+        spinnerCurrency.setSelection(restoredCurrencyIndex, false);
 
         spinnerCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             boolean initial = true;
-
             @Override
             public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
-                // Avoid writing on the very first automatic selection if you like:
                 if (initial) { initial = false; return; }
                 String label = currencies.get(position);
                 String code = label.split(" ")[0];
                 prefs.edit().putString("currency_code", code).apply();
             }
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
+        });
 
+        // ---- Date Format Spinner ----
+        spinnerDateFormat = findViewById(R.id.spinner_date_format);
+
+        final List<String> dateFormats = Arrays.asList(
+                "dd/MM/yyyy",
+                "MM/dd/yyyy",
+                "yyyy-MM-dd",
+                "dd MMM yyyy",
+                "EEE, dd MMM yyyy",
+                "dd.MM.yyyy"
+        );
+
+        ArrayAdapter<String> adapterDate = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                dateFormats
+        );
+        adapterDate.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDateFormat.setAdapter(adapterDate);
+
+        String savedFormat = prefs.getString("date_format", "dd/MM/yyyy");
+        int restoredFormatIndex = dateFormats.indexOf(savedFormat);
+        if (restoredFormatIndex >= 0) {
+            spinnerDateFormat.setSelection(restoredFormatIndex, false);
+        }
+
+        spinnerDateFormat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            boolean initial = true;
             @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+                if (initial) { initial = false; return; }
+                String format = dateFormats.get(position);
+                prefs.edit().putString("date_format", format).apply();
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) { }
         });
     }
 }
