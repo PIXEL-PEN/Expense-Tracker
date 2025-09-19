@@ -43,14 +43,13 @@
             android:padding="4dp">
 
             <Spinner
-                android:id="@+id/spinner_date_format"
+                android:id="@+id/spinner_currency"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_margin="8dp"
                 android:background="@drawable/field_gradient_bluegray"
                 android:paddingStart="12dp"
                 android:paddingEnd="44dp" />
-
         </LinearLayout>
 
         <!-- Date Format -->
@@ -81,7 +80,6 @@
                 android:background="@drawable/field_gradient_bluegray"
                 android:paddingStart="12dp"
                 android:paddingEnd="44dp" />
-
         </LinearLayout>
 
         <!-- Export Database -->
@@ -107,8 +105,6 @@
             android:textColor="@android:color/white"
             android:textAllCaps="false" />
 
-
-
         <!-- Reset Database -->
         <TextView
             android:layout_width="match_parent"
@@ -132,8 +128,6 @@
             android:textColor="@android:color/white"
             android:textAllCaps="false" />
 
-
-
         <!-- About -->
         <TextView
             android:layout_width="match_parent"
@@ -154,6 +148,5 @@
             android:text="Expense Tracker v1.0\n\n© PIXEL-PEN\n\nA simple, offline expense management app with export and reset functions."
             android:textSize="16sp"
             android:gravity="top|start" />
-
     </LinearLayout>
 </ScrollView>
