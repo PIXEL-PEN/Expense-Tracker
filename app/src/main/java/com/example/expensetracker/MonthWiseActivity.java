@@ -1,70 +1,63 @@
 package com.example.expensetracker;
 
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Date;
 
 public class MonthWiseActivity extends AppCompatActivity {
 
     private LinearLayout expensesContainer;
-
-    // Match DB reality → stored with a dot, e.g. "18 Sep. 2025"
-    private final SimpleDateFormat dbFormat = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
-    private final SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM - yyyy", Locale.ENGLISH); // banner
-    private final SimpleDateFormat dayDisplayFormat = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH); // rows
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_month_wise);
 
-        expensesContainer = findViewById(R.id.expenses_container_month);
+        expensesContainer = findViewById(R.id.monthwise_container);
+        LayoutInflater inflater = LayoutInflater.from(this);
 
-        // Load all expenses
+        // Load selected currency
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+        String code = prefs.getString("currency_code", "THB");
+        String symbol = CurrencyUtils.symbolFor(code);
+
+        // Get all expenses
         List<Expense> allExpenses = ExpenseDatabase
                 .getDatabase(this)
                 .expenseDao()
                 .getAll();
 
-        // Group: Month → Day → Expenses
-        Map<String, Map<String, List<Expense>>> grouped = new LinkedHashMap<>();
-
+        // Group by month key
+        Map<String, List<Expense>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            try {
-                Date parsed = dbFormat.parse(e.date);
-                if (parsed == null) continue;
-
-                String monthKey = monthFormat.format(parsed);     // "September - 2025"
-                String dayKey = dayDisplayFormat.format(parsed);  // "18 Sep. 2025"
-
-                grouped.putIfAbsent(monthKey, new LinkedHashMap<>());
-                grouped.get(monthKey).putIfAbsent(dayKey, new ArrayList<>());
-                grouped.get(monthKey).get(dayKey).add(e);
-
-            } catch (ParseException ex) {
-                // Skip malformed date
+            String monthKey = extractMonthKey(e.date); // e.g. "Sep 2025"
+            if (!grouped.containsKey(monthKey)) {
+                grouped.put(monthKey, new ArrayList<>());
             }
+            grouped.get(monthKey).add(e);
         }
 
         expensesContainer.removeAllViews();
 
-        // Inflate UI
-        for (Map.Entry<String, Map<String, List<Expense>>> monthEntry : grouped.entrySet()) {
-            String month = monthEntry.getKey();
-            Map<String, List<Expense>> dailyMap = monthEntry.getValue();
+        // For each month: banner → rows → total
+        for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
+            String month = entry.getKey();
+            List<Expense> items = entry.getValue();
 
             // Month banner
             TextView banner = new TextView(this);
@@ -72,7 +65,7 @@ public class MonthWiseActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     dp(36)
             ));
-            banner.setBackgroundColor(0xFFD3D3D3);
+            banner.setBackgroundColor(0xFFE1C699);
             banner.setText(month);
             banner.setTextSize(16);
             banner.setTypeface(Typeface.DEFAULT_BOLD);
@@ -81,42 +74,27 @@ public class MonthWiseActivity extends AppCompatActivity {
             banner.setPadding(dp(16), 0, 0, 0);
             expensesContainer.addView(banner);
 
-            double monthlyTotal = 0.0;
+            double total = 0.0;
 
-            // Each day row
-            for (Map.Entry<String, List<Expense>> dayEntry : dailyMap.entrySet()) {
-                String day = dayEntry.getKey();
-                List<Expense> dailyExpenses = dayEntry.getValue();
+            // Rows for each expense in that month
+            for (Expense e : items) {
+                View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
-                double dailyTotal = 0.0;
-                for (Expense ex : dailyExpenses) {
-                    dailyTotal += ex.amount;
-                }
-                monthlyTotal += dailyTotal;
+                TextView textDescription = row.findViewById(R.id.text_description);
+                TextView textCategory = row.findViewById(R.id.text_category);
+                TextView textAmount = row.findViewById(R.id.text_amount);
 
-                LinearLayout row = new LinearLayout(this);
-                row.setOrientation(LinearLayout.HORIZONTAL);
-                row.setPadding(dp(12), dp(6), dp(12), dp(6));
+                textDescription.setText(e.description);
+                textCategory.setText(e.date);
 
-                TextView dayTv = new TextView(this);
-                dayTv.setLayoutParams(new LinearLayout.LayoutParams(
-                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-                dayTv.setText(day);
-                dayTv.setTextSize(15);
-                dayTv.setTypeface(Typeface.DEFAULT_BOLD);
-                dayTv.setTextColor(0xFF000000);
+                // Format amount + smaller currency symbol after the number
+                String formatted = String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
+                SpannableString display = new SpannableString(formatted);
+                int start = formatted.length() - symbol.length();
+                display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                TextView amountTv = new TextView(this);
-                amountTv.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
-                amountTv.setText(String.format(Locale.ENGLISH, "$%.2f", dailyTotal));
-                amountTv.setTextSize(15);
-                amountTv.setTypeface(Typeface.DEFAULT_BOLD);
-                amountTv.setTextColor(0xFF000000);
+                textAmount.setText(display);
 
-                row.addView(dayTv);
-                row.addView(amountTv);
                 expensesContainer.addView(row);
 
                 // Divider
@@ -124,8 +102,10 @@ public class MonthWiseActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, 1);
                 divider.setLayoutParams(lp);
-                divider.setBackgroundColor(0xFFCCCCCC);
+                divider.setBackgroundColor(0xFF888888);
                 expensesContainer.addView(divider);
+
+                total += e.amount;
             }
 
             // TOTAL row
@@ -141,19 +121,36 @@ public class MonthWiseActivity extends AppCompatActivity {
             label.setTypeface(Typeface.DEFAULT_BOLD);
             label.setTextColor(0xFFB71C1C);
 
-            TextView totalAmountTv = new TextView(this);
-            totalAmountTv.setLayoutParams(new LinearLayout.LayoutParams(
+            TextView amountTv = new TextView(this);
+            amountTv.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
-            totalAmountTv.setText(String.format(Locale.ENGLISH, "$%.2f", monthlyTotal));
-            totalAmountTv.setTextSize(18);
-            totalAmountTv.setTypeface(Typeface.DEFAULT_BOLD);
-            totalAmountTv.setTextColor(0xFFB71C1C);
+
+            String totalFormatted = String.format(Locale.ENGLISH, "%.2f %s", total, symbol);
+            SpannableString totalDisplay = new SpannableString(totalFormatted);
+            int start = totalFormatted.length() - symbol.length();
+            totalDisplay.setSpan(new RelativeSizeSpan(0.85f), start, totalFormatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            amountTv.setText(totalDisplay);
+            amountTv.setTextSize(18);
+            amountTv.setTypeface(Typeface.DEFAULT_BOLD);
+            amountTv.setTextColor(0xFFB71C1C);
 
             totalRow.addView(label);
-            totalRow.addView(totalAmountTv);
+            totalRow.addView(amountTv);
             expensesContainer.addView(totalRow);
         }
+    }
+
+    private String extractMonthKey(String dateStr) {
+        // Expected format like "19 Sep. 2025" → "Sep 2025"
+        try {
+            String[] parts = dateStr.split(" ");
+            if (parts.length >= 3) {
+                return parts[1].replace(".", "") + " " + parts[2];
+            }
+        } catch (Exception ignored) {}
+        return dateStr;
     }
 
     private int dp(int dps) {

@@ -31,7 +31,7 @@ public class CategoryWiseActivity extends AppCompatActivity {
         expensesContainer = findViewById(R.id.categorywise_container);
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        // --- Load user’s chosen currency ---
+        // Get currency choice
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String code = prefs.getString("currency_code", "THB");
         String symbol = CurrencyUtils.symbolFor(code);
@@ -86,10 +86,12 @@ public class CategoryWiseActivity extends AppCompatActivity {
                 textDescription.setText(e.description);
                 textCategory.setText(e.date);
 
-                // Amount with smaller currency symbol
-                String formatted = String.format(Locale.ENGLISH, "%.2f", e.amount);
-                SpannableString display = new SpannableString(symbol + " " + formatted);
-                display.setSpan(new RelativeSizeSpan(0.7f), 0, symbol.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                // Format: amount + space + symbol (symbol slightly smaller)
+                String formatted = String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
+                SpannableString display = new SpannableString(formatted);
+                int start = formatted.length() - symbol.length();
+                display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
                 textAmount.setText(display);
 
                 expensesContainer.addView(row);
@@ -123,11 +125,12 @@ public class CategoryWiseActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            String totalFormatted = String.format(Locale.ENGLISH, "%.2f", total);
-            SpannableString totalDisplay = new SpannableString(symbol + " " + totalFormatted);
-            totalDisplay.setSpan(new RelativeSizeSpan(0.7f), 0, symbol.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            amountTv.setText(totalDisplay);
+            String totalFormatted = String.format(Locale.ENGLISH, "%.2f %s", total, symbol);
+            SpannableString totalDisplay = new SpannableString(totalFormatted);
+            int start = totalFormatted.length() - symbol.length();
+            totalDisplay.setSpan(new RelativeSizeSpan(0.85f), start, totalFormatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+            amountTv.setText(totalDisplay);
             amountTv.setTextSize(18);
             amountTv.setTypeface(Typeface.DEFAULT_BOLD);
             amountTv.setTextColor(0xFFB71C1C);

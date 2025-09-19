@@ -5,9 +5,7 @@
     android:layout_height="match_parent"
     android:background="#ECEFF1">
 
-    <!-- Top bar -->
     <TextView
-        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="96dp"
         android:gravity="bottom|start"
@@ -19,20 +17,16 @@
         android:textStyle="bold"
         android:background="#455A64" />
 
-    <!-- Scrollable list -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/expenses_container_date"
-            android:orientation="vertical"
+            android:id="@+id/datewise_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
-            android:paddingBottom="80dp" />  <!-- ✅ reserve space above nav bar -->
+            android:orientation="vertical"
+            android:background="@android:color/white" />
     </ScrollView>
-
 </LinearLayout>
