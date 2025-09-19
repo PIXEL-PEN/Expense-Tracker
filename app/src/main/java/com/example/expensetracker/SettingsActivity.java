@@ -19,6 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Spinner spinnerCurrency;
     private Spinner spinnerDateFormat;
     private AppCompatButton btnExport;
+    private AppCompatButton btnReset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,5 +120,20 @@ public class SettingsActivity extends AppCompatActivity {
                     .setNegativeButton("Cancel", null)
                     .show();
         });
+
+        // ---- Reset Database Button ----
+        btnReset = findViewById(R.id.btn_reset);
+        btnReset.setOnClickListener(v -> {
+            new AlertDialog.Builder(SettingsActivity.this)
+                    .setTitle("Reset Database")
+                    .setMessage("This will delete ALL records permanently. Continue?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        ExpenseDatabase.getDatabase(this).expenseDao().clearAll();
+                        Toast.makeText(this, "All expenses cleared", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
     }
 }
