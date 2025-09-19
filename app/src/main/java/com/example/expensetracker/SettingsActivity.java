@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +18,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private Spinner spinnerCurrency;
     private Spinner spinnerDateFormat;
+    private AppCompatButton btnExport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +29,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         // ---- Currency Spinner ----
         spinnerCurrency = findViewById(R.id.spinner_currency);
-
         final List<String> currencies = Arrays.asList(
                 "THB — Thai Baht (฿)",
                 "USD — US Dollar ($)",
@@ -40,7 +43,6 @@ public class SettingsActivity extends AppCompatActivity {
                 "HKD — Hong Kong Dollar ($)",
                 "MYR — Malaysian Ringgit (RM)"
         );
-
         ArrayAdapter<String> adapterCurrency = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
@@ -48,7 +50,6 @@ public class SettingsActivity extends AppCompatActivity {
         );
         adapterCurrency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCurrency.setAdapter(adapterCurrency);
-
         String savedCode = prefs.getString("currency_code", "THB");
         int restoredCurrencyIndex = 0;
         for (int i = 0; i < currencies.size(); i++) {
@@ -58,7 +59,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
         spinnerCurrency.setSelection(restoredCurrencyIndex, false);
-
         spinnerCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             boolean initial = true;
             @Override
@@ -73,7 +73,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         // ---- Date Format Spinner ----
         spinnerDateFormat = findViewById(R.id.spinner_date_format);
-
         final List<String> dateFormats = Arrays.asList(
                 "dd/MM/yyyy",
                 "MM/dd/yyyy",
@@ -82,7 +81,6 @@ public class SettingsActivity extends AppCompatActivity {
                 "EEE, dd MMM yyyy",
                 "dd.MM.yyyy"
         );
-
         ArrayAdapter<String> adapterDate = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
@@ -90,13 +88,11 @@ public class SettingsActivity extends AppCompatActivity {
         );
         adapterDate.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDateFormat.setAdapter(adapterDate);
-
         String savedFormat = prefs.getString("date_format", "dd/MM/yyyy");
         int restoredFormatIndex = dateFormats.indexOf(savedFormat);
         if (restoredFormatIndex >= 0) {
             spinnerDateFormat.setSelection(restoredFormatIndex, false);
         }
-
         spinnerDateFormat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             boolean initial = true;
             @Override
@@ -106,6 +102,22 @@ public class SettingsActivity extends AppCompatActivity {
                 prefs.edit().putString("date_format", format).apply();
             }
             @Override public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
+        // ---- Export Database Button ----
+        btnExport = findViewById(R.id.btn_export);
+        btnExport.setOnClickListener(v -> {
+            new AlertDialog.Builder(SettingsActivity.this)
+                    .setTitle("Export Database")
+                    .setItems(new CharSequence[]{"Save to Storage", "Send by Email"}, (dialog, which) -> {
+                        if (which == 0) {
+                            Toast.makeText(this, "Saving to storage (stub)", Toast.LENGTH_SHORT).show();
+                        } else if (which == 1) {
+                            Toast.makeText(this, "Sending by email (stub)", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
     }
 }
