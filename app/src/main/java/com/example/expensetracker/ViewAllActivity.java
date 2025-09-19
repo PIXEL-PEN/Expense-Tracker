@@ -1,40 +1,34 @@
 package com.example.expensetracker;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ViewAllActivity extends AppCompatActivity {
-
-    private RecyclerView recyclerView;
-    private ExpenseAdapter adapter;
-    private TextView tvTotalAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all);
 
-        recyclerView = findViewById(R.id.recycler_expenses);
+        RecyclerView recyclerView = findViewById(R.id.recycler_expenses);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration());
 
-
-        tvTotalAmount = findViewById(R.id.tvTotalAmount);
-
-        // Load all expenses from DB
+        // Load all expenses
         List<Expense> expenses = ExpenseDatabase.getDatabase(this).expenseDao().getAll();
 
-        // Set up adapter
-        adapter = new ExpenseAdapter(expenses);
+        // Attach adapter
+        ExpenseAdapter adapter = new ExpenseAdapter(expenses);
         recyclerView.setAdapter(adapter);
 
         // Calculate total
@@ -42,20 +36,20 @@ public class ViewAllActivity extends AppCompatActivity {
         for (Expense e : expenses) {
             total += e.amount;
         }
-        tvTotalAmount.setText(String.format("$%.2f", total));
 
-        // 👇 Keep footer above system nav bar
-        View footer = findViewById(R.id.footer_bar);
-        if (footer != null) {
-            ViewCompat.setOnApplyWindowInsetsListener(footer, (v, insets) -> {
-                int bottomInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
-                int basePadding = Math.round(16f * getResources().getDisplayMetrics().density);
-                v.setPadding(v.getPaddingLeft(),
-                        v.getPaddingTop(),
-                        v.getPaddingRight(),
-                        basePadding + bottomInset);
-                return insets;
-            });
-        }
+        // Load user’s selected currency
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+        String code = prefs.getString("currency_code", "THB");
+        String symbol = CurrencyUtils.symbolFor(code);
+
+        // Format footer total with smaller currency symbol
+        String formattedTotal = String.format(Locale.ENGLISH, "%.2f %s", total, symbol);
+        SpannableString totalDisplay = new SpannableString(formattedTotal);
+        int start = formattedTotal.length() - symbol.length();
+        totalDisplay.setSpan(new RelativeSizeSpan(0.85f), start, formattedTotal.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        TextView tvTotalAmount = findViewById(R.id.tvTotalAmount);
+        tvTotalAmount.setText(totalDisplay);
     }
 }

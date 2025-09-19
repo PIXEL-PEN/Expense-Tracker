@@ -1,5 +1,10 @@
 package com.example.expensetracker;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
 
@@ -31,7 +37,21 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         Expense expense = expenses.get(position);
         holder.textCategory.setText(expense.category);
         holder.textDate.setText(expense.date);
-        holder.textAmount.setText(String.format("$%.2f", expense.amount));
+
+        // Load user’s selected currency
+        SharedPreferences prefs = holder.itemView.getContext()
+                .getSharedPreferences("settings", Context.MODE_PRIVATE);
+        String code = prefs.getString("currency_code", "THB");
+        String symbol = CurrencyUtils.symbolFor(code);
+
+        // Format amount with smaller currency symbol after number
+        String formatted = String.format(Locale.ENGLISH, "%.2f %s", expense.amount, symbol);
+        SpannableString display = new SpannableString(formatted);
+        int start = formatted.length() - symbol.length();
+        display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        holder.textAmount.setText(display);
     }
 
     @Override
