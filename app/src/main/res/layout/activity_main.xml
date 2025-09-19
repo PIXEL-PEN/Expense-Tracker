@@ -40,8 +40,8 @@
             android:focusable="true">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="33dp"
+                android:layout_height="33dp"
                 android:src="@drawable/ic_gear_custom"
                 android:contentDescription="Settings" />
         </LinearLayout>
