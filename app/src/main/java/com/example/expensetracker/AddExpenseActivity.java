@@ -1,6 +1,7 @@
 package com.example.expensetracker;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -119,7 +120,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             dpd.show();
         });
 
-        // --- SAVE BUTTON ---
+        // --- SAVE BUTTON (now saves AND opens View Menu) ---
         Button btnSave = findButtonByAnyId("btn_save", "button_save", "saveButton");
         if (btnSave != null) {
             btnSave.setOnClickListener(v -> {
@@ -169,7 +170,7 @@ public class AddExpenseActivity extends AppCompatActivity {
                 // Insert into DB
                 ExpenseDatabase.getDatabase(this).expenseDao().insert(expense);
 
-                Toast.makeText(this, "Expense saved to database", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Expense saved", Toast.LENGTH_SHORT).show();
 
                 // Reset inputs
                 etDescription.setText("");
@@ -177,20 +178,20 @@ public class AddExpenseActivity extends AppCompatActivity {
                 spinnerCategory.setSelection(0);
                 selectedDate = Calendar.getInstance();
                 updateDateDisplay();
+
+                // ✅ Open View Menu after saving
+                startActivity(new Intent(AddExpenseActivity.this, ViewMenuActivity.class));
             });
         } else {
             Toast.makeText(this, "Save button not found in layout.", Toast.LENGTH_LONG).show();
         }
 
-        // --- VIEW BUTTON ---
-        Button btnView = findButtonByAnyId("btn_view");
+        // --- VIEW BUTTON (unchanged) ---
+        Button btnView = findButtonByAnyId("btn_view", "button_view", "viewButton");
         if (btnView != null) {
-            btnView.setOnClickListener(v -> {
-                startActivity(new android.content.Intent(
-                        AddExpenseActivity.this,
-                        ViewMenuActivity.class
-                ));
-            });
+            btnView.setOnClickListener(v ->
+                    startActivity(new Intent(AddExpenseActivity.this, ViewMenuActivity.class))
+            );
         }
     }
 
