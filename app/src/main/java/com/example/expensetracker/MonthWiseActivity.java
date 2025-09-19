@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +25,9 @@ import java.util.Map;
 public class MonthWiseActivity extends AppCompatActivity {
 
     private LinearLayout expensesContainer;
+
+    private final SimpleDateFormat parseFormat = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
+    private final SimpleDateFormat displayFormat = new SimpleDateFormat("MMM. yyyy", Locale.ENGLISH);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +51,7 @@ public class MonthWiseActivity extends AppCompatActivity {
         // Group by month key
         Map<String, List<Expense>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            String monthKey = extractMonthKey(e.date); // e.g. "Sep 2025"
+            String monthKey = extractMonthKey(e.date);
             if (!grouped.containsKey(monthKey)) {
                 grouped.put(monthKey, new ArrayList<>());
             }
@@ -143,14 +149,13 @@ public class MonthWiseActivity extends AppCompatActivity {
     }
 
     private String extractMonthKey(String dateStr) {
-        // Expected format like "19 Sep. 2025" → "Sep 2025"
         try {
-            String[] parts = dateStr.split(" ");
-            if (parts.length >= 3) {
-                return parts[1].replace(".", "") + " " + parts[2];
+            Date parsed = parseFormat.parse(dateStr);
+            if (parsed != null) {
+                return displayFormat.format(parsed); // Always "Sep. 2025"
             }
-        } catch (Exception ignored) {}
-        return dateStr;
+        } catch (ParseException ignored) {}
+        return dateStr; // fallback
     }
 
     private int dp(int dps) {
