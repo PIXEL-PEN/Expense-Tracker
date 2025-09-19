@@ -1,7 +1,11 @@
 package com.example.expensetracker;
 
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,6 +30,11 @@ public class CategoryWiseActivity extends AppCompatActivity {
 
         expensesContainer = findViewById(R.id.categorywise_container);
         LayoutInflater inflater = LayoutInflater.from(this);
+
+        // --- Load user’s chosen currency ---
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+        String code = prefs.getString("currency_code", "THB");
+        String symbol = CurrencyUtils.symbolFor(code);
 
         // Get all expenses
         List<Expense> allExpenses = ExpenseDatabase
@@ -75,12 +84,17 @@ public class CategoryWiseActivity extends AppCompatActivity {
                 TextView textAmount      = row.findViewById(R.id.text_amount);
 
                 textDescription.setText(e.description);
-                textCategory.setText(e.date); // show the date under description
-                textAmount.setText(String.format(Locale.ENGLISH, "$%.2f", e.amount));
+                textCategory.setText(e.date);
+
+                // Amount with smaller currency symbol
+                String formatted = String.format(Locale.ENGLISH, "%.2f", e.amount);
+                SpannableString display = new SpannableString(symbol + " " + formatted);
+                display.setSpan(new RelativeSizeSpan(0.7f), 0, symbol.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                textAmount.setText(display);
 
                 expensesContainer.addView(row);
 
-                // Always add divider after each row
+                // Divider
                 View divider = new View(this);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, 1);
@@ -108,7 +122,12 @@ public class CategoryWiseActivity extends AppCompatActivity {
             amountTv.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
-            amountTv.setText(String.format(Locale.ENGLISH, "$%.2f", total));
+
+            String totalFormatted = String.format(Locale.ENGLISH, "%.2f", total);
+            SpannableString totalDisplay = new SpannableString(symbol + " " + totalFormatted);
+            totalDisplay.setSpan(new RelativeSizeSpan(0.7f), 0, symbol.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            amountTv.setText(totalDisplay);
+
             amountTv.setTextSize(18);
             amountTv.setTypeface(Typeface.DEFAULT_BOLD);
             amountTv.setTextColor(0xFFB71C1C);
