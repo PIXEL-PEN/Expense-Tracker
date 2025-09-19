@@ -19,7 +19,7 @@
         android:background="#455A64" />
 
     <!-- Scrollable container that Java populates -->
-    <ScrollView
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -29,6 +29,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white" />
+            android:paddingBottom="60dp" />
+
     </ScrollView>
+
 </LinearLayout>
