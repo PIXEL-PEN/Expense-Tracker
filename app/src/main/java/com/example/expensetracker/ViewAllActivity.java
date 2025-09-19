@@ -27,22 +27,21 @@ public class ViewAllActivity extends AppCompatActivity {
         // Load all expenses
         List<Expense> expenses = ExpenseDatabase.getDatabase(this).expenseDao().getAll();
 
-        // Attach adapter
+        // Adapter
         ExpenseAdapter adapter = new ExpenseAdapter(expenses);
         recyclerView.setAdapter(adapter);
 
-        // Calculate total
-        double total = 0.0;
-        for (Expense e : expenses) {
-            total += e.amount;
-        }
+        // Crisp 1dp gray dividers
+        recyclerView.addItemDecoration(new DividerItemDecoration(this));
 
-        // Load user’s selected currency
+        // Footer total with smaller currency symbol after the number
+        double total = 0.0;
+        for (Expense e : expenses) total += e.amount;
+
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String code = prefs.getString("currency_code", "THB");
         String symbol = CurrencyUtils.symbolFor(code);
 
-        // Format footer total with smaller currency symbol
         String formattedTotal = String.format(Locale.ENGLISH, "%.2f %s", total, symbol);
         SpannableString totalDisplay = new SpannableString(formattedTotal);
         int start = formattedTotal.length() - symbol.length();

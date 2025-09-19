@@ -1,19 +1,20 @@
 package com.example.expensetracker;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
-    private final Paint paint = new Paint();
+    private final Paint paint;
 
-    public DividerItemDecoration() {
-        paint.setColor(0xFFCCCCCC); // light gray
-        paint.setStrokeWidth(2f);
+    public DividerItemDecoration(Context context) {
+        paint = new Paint();
+        paint.setColor(0xFFAAAAAA); // medium-dark gray, darker than #CCCCCC but lighter than #888888
+        paint.setStrokeWidth(context.getResources().getDisplayMetrics().density * 0.75f); // ~0.75dp
     }
 
     @Override
@@ -22,17 +23,10 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         int right = parent.getWidth() - parent.getPaddingRight();
 
         int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount - 1; i++) { // skip last item
+        for (int i = 0; i < childCount - 1; i++) {
             View child = parent.getChildAt(i);
-            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-            int bottom = child.getBottom() + params.bottomMargin;
-            c.drawLine(left, bottom, right, bottom, paint);
+            float y = child.getBottom();
+            c.drawLine(left, y, right, y, paint);
         }
-    }
-
-    @Override
-    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,
-                               @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-        outRect.bottom = 2; // spacing for divider line
     }
 }
