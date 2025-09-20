@@ -14,4 +14,12 @@
         <item>Other</item>
     </string-array>
 
+    <!-- ✅ Needed for SettingsActivity -->
+    <string-array name="currency_options">
+        <item>THB</item>
+        <item>USD</item>
+        <item>EUR</item>
+        <item>GBP</item>
+        <item>JPY</item>
+    </string-array>
 </resources>
