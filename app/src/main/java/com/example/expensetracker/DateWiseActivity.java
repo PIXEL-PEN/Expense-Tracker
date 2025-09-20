@@ -111,23 +111,31 @@ public class DateWiseActivity extends AppCompatActivity {
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 textAmount.setText(display);
 
-                // Clickable row: Edit/Delete
+                // ✅ Clickable row: Expense Details dialog
                 row.setOnClickListener(v -> {
+                    String details = "Description: " + e.description + "\n"
+                            + "Category: " + e.category + "\n"
+                            + "Amount: " + String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol) + "\n"
+                            + "Date: " + formatFullDate(e.date);
+
                     new AlertDialog.Builder(DateWiseActivity.this)
-                            .setTitle("Edit or Delete")
-                            .setMessage("What would you like to do?")
-                            .setPositiveButton("Edit", (d, which) -> {
-                                Intent intent = new Intent(DateWiseActivity.this, AddExpenseActivity.class);
-                                intent.putExtra("expense_id", e.id);
-                                startActivity(intent);
-                            })
-                            .setNegativeButton("Delete", (d, which) -> {
+                            .setTitle("Expense Details")
+                            .setMessage(details)
+                            // CLOSE (neutral button)
+                            .setNeutralButton("CLOSE", (d, which) -> d.dismiss())
+                            // DELETE (negative button, left)
+                            .setNegativeButton("DELETE", (d, which) -> {
                                 ExpenseDatabase.getDatabase(DateWiseActivity.this)
                                         .expenseDao()
                                         .delete(e);
                                 recreate();
                             })
-                            .setNeutralButton("Cancel", null)
+                            // EDIT (positive button, right)
+                            .setPositiveButton("EDIT", (d, which) -> {
+                                Intent intent = new Intent(DateWiseActivity.this, AddExpenseActivity.class);
+                                intent.putExtra("expense_id", e.id);
+                                startActivity(intent);
+                            })
                             .show();
                 });
 
