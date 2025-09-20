@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -47,7 +46,7 @@ public class DateWiseActivity extends AppCompatActivity {
                 .expenseDao()
                 .getAll();
 
-        // Group by the stored date string
+        // Group by date string (raw from Expense.date)
         Map<String, List<Expense>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
             List<Expense> list = grouped.get(e.date);
@@ -58,13 +57,13 @@ public class DateWiseActivity extends AppCompatActivity {
             list.add(e);
         }
 
-        // Order: inside each date oldest -> newest
+        // Sort items within each date (oldest → newest)
         for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
             List<Expense> items = entry.getValue();
             Collections.sort(items, Comparator.comparingInt(exp -> exp.id));
         }
 
-        // Order dates by earliest id (older dates first)
+        // Sort the date groups themselves (by earliest id in each group)
         Map<String, Integer> dateMinId = new LinkedHashMap<>();
         for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
             int minId = Integer.MAX_VALUE;
@@ -78,17 +77,17 @@ public class DateWiseActivity extends AppCompatActivity {
 
         expensesContainer.removeAllViews();
 
-        for (String dateKey : dates) {
-            List<Expense> items = grouped.get(dateKey);
+        for (String date : dates) {
+            List<Expense> items = grouped.get(date);
 
-            // Banner: Month - Year (e.g., "September - 2025")
+            // ✅ Banner shows full date (day + short month + year)
             TextView banner = new TextView(this);
             banner.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     dp(36)
             ));
             banner.setBackgroundColor(0xFFE1C699);
-            banner.setText(bannerMonthYearForGroup(items));
+            banner.setText(formatFullDate(date));
             banner.setTextSize(16);
             banner.setTypeface(Typeface.DEFAULT_BOLD);
             banner.setTextColor(0xFF000000);
@@ -98,10 +97,7 @@ public class DateWiseActivity extends AppCompatActivity {
 
             double total = 0.0;
 
-            // Rows (oldest -> newest so newly added appear below older)
-            for (int j = 0; j < items.size(); j++) {
-                Expense e = items.get(j);
-
+            for (Expense e : items) {
                 View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
                 TextView textDescription = row.findViewById(R.id.text_description);
@@ -121,7 +117,7 @@ public class DateWiseActivity extends AppCompatActivity {
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 textAmount.setText(display);
 
-                // Click → Edit/Delete
+                // Make row clickable → Edit/Delete
                 row.setOnClickListener(v -> {
                     new AlertDialog.Builder(DateWiseActivity.this)
                             .setTitle("Edit or Delete")
@@ -153,6 +149,7 @@ public class DateWiseActivity extends AppCompatActivity {
                 total += e.amount;
             }
 
+            // TOTAL row
             LinearLayout totalRow = new LinearLayout(this);
             totalRow.setOrientation(LinearLayout.HORIZONTAL);
             totalRow.setPadding(dp(12), dp(12), dp(12), dp(12));
@@ -190,35 +187,14 @@ public class DateWiseActivity extends AppCompatActivity {
         return Math.round(dps * density);
     }
 
-    /**
-     * Build "MMMM - yyyy" for a given date group.
-     * Tries to parse any item's date string; if no year is present, assumes current year.
-     */
-    private String bannerMonthYearForGroup(List<Expense> items) {
-        // Try all items until one parses with a year
-        for (Expense e : items) {
-            String out = tryFormatMonthYear(e.date);
-            if (out != null) return out;
-        }
-        // If still nothing worked (e.g., "20 Sep." with no year everywhere), assume current year
-        String raw = items.isEmpty() ? "" : items.get(0).date;
-        String guess = tryFormatMonthYearAssumingCurrentYear(raw);
-        return guess != null ? guess : "Unknown - " + Calendar.getInstance().get(Calendar.YEAR);
-    }
-
-    // Try to parse when the date string already contains a year
-    private String tryFormatMonthYear(String raw) {
-        if (raw == null) return null;
+    // ✅ Format raw date into "dd MMM. yyyy"
+    private String formatFullDate(String raw) {
         String[] patterns = {
                 "yyyy-MM-dd",
-                "dd MMM yyyy",
-                "dd MMM. yyyy",
-                "d MMM yyyy",
-                "d MMM. yyyy",
-                "MM/dd/yyyy",
                 "dd/MM/yyyy",
-                "yyyy/MM/dd",
-                "yyyy-MM"
+                "MM/dd/yyyy",
+                "dd MMM yyyy",
+                "dd MMM. yyyy"
         };
         for (String p : patterns) {
             try {
@@ -226,37 +202,11 @@ public class DateWiseActivity extends AppCompatActivity {
                 in.setLenient(false);
                 Date d = in.parse(raw);
                 if (d != null) {
-                    SimpleDateFormat out = new SimpleDateFormat("MMMM - yyyy", Locale.ENGLISH);
+                    SimpleDateFormat out = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
                     return out.format(d);
                 }
-            } catch (Exception ignore) { }
+            } catch (Exception ignore) {}
         }
-        return null;
-    }
-
-    // If the raw string has no year (e.g., "20 Sep."), assume current year and parse.
-    private String tryFormatMonthYearAssumingCurrentYear(String raw) {
-        if (raw == null) return null;
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        String[] noYearBases = {
-                "d MMM",
-                "dd MMM",
-                "d MMM.",
-                "dd MMM."
-        };
-        for (String base : noYearBases) {
-            try {
-                // Compose a pattern with year and a composed input with the current year
-                String patternWithYear = base + " yyyy"; // e.g., "d MMM yyyy" or "d MMM. yyyy"
-                SimpleDateFormat in = new SimpleDateFormat(patternWithYear, Locale.ENGLISH);
-                in.setLenient(false);
-                Date d = in.parse(raw + " " + year);
-                if (d != null) {
-                    SimpleDateFormat out = new SimpleDateFormat("MMMM - yyyy", Locale.ENGLISH);
-                    return out.format(d);
-                }
-            } catch (Exception ignore) { }
-        }
-        return null;
+        return raw;
     }
 }
