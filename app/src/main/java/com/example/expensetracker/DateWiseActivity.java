@@ -46,24 +46,18 @@ public class DateWiseActivity extends AppCompatActivity {
                 .expenseDao()
                 .getAll();
 
-        // Group by date string (raw from Expense.date)
+        // Group by date string
         Map<String, List<Expense>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            List<Expense> list = grouped.get(e.date);
-            if (list == null) {
-                list = new ArrayList<>();
-                grouped.put(e.date, list);
-            }
-            list.add(e);
+            grouped.computeIfAbsent(e.date, k -> new ArrayList<>()).add(e);
         }
 
         // Sort items within each date (oldest → newest)
-        for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
-            List<Expense> items = entry.getValue();
+        for (List<Expense> items : grouped.values()) {
             Collections.sort(items, Comparator.comparingInt(exp -> exp.id));
         }
 
-        // Sort the date groups themselves (by earliest id in each group)
+        // Sort the date groups by earliest id
         Map<String, Integer> dateMinId = new LinkedHashMap<>();
         for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
             int minId = Integer.MAX_VALUE;
@@ -80,7 +74,7 @@ public class DateWiseActivity extends AppCompatActivity {
         for (String date : dates) {
             List<Expense> items = grouped.get(date);
 
-            // ✅ Banner shows full date (day + short month + year)
+            // ✅ Banner with full date
             TextView banner = new TextView(this);
             banner.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -117,7 +111,7 @@ public class DateWiseActivity extends AppCompatActivity {
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 textAmount.setText(display);
 
-                // Make row clickable → Edit/Delete
+                // Clickable row: Edit/Delete
                 row.setOnClickListener(v -> {
                     new AlertDialog.Builder(DateWiseActivity.this)
                             .setTitle("Edit or Delete")
@@ -187,7 +181,7 @@ public class DateWiseActivity extends AppCompatActivity {
         return Math.round(dps * density);
     }
 
-    // ✅ Format raw date into "dd MMM. yyyy"
+    // ✅ Force full date format "dd MMM. yyyy"
     private String formatFullDate(String raw) {
         String[] patterns = {
                 "yyyy-MM-dd",
