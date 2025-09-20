@@ -45,24 +45,34 @@ public class MonthWiseActivity extends AppCompatActivity {
                 .expenseDao()
                 .getAll();
 
-        // Group by month -> then by full date
+        // ✅ Group by normalized month key (yyyy-MM) → then by full date (yyyy-MM-dd)
         Map<String, Map<String, List<Expense>>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            String monthKey = e.date.substring(0, 7); // yyyy-MM
-            grouped.putIfAbsent(monthKey, new LinkedHashMap<>());
+            String monthKey = formatToYearMonth(e.date);   // robust normalization
+            if (monthKey == null) continue;
+
+            if (!grouped.containsKey(monthKey)) {
+                grouped.put(monthKey, new LinkedHashMap<>());
+            }
             Map<String, List<Expense>> dateMap = grouped.get(monthKey);
-            dateMap.putIfAbsent(e.date, new ArrayList<>()); // full yyyy-MM-dd
+
+            // keep the original stored date string as the daily key (should be yyyy-MM-dd)
+            if (!dateMap.containsKey(e.date)) {
+                dateMap.put(e.date, new ArrayList<>());
+            }
             dateMap.get(e.date).add(e);
         }
 
         expensesContainer.removeAllViews();
 
-        // Loop through each month
-        for (Map.Entry<String, Map<String, List<Expense>>> monthEntry : grouped.entrySet()) {
-            String monthKey = monthEntry.getKey();
-            Map<String, List<Expense>> dateMap = monthEntry.getValue();
+        // Sort months chronologically (yyyy-MM sorts lexicographically fine)
+        List<String> months = new ArrayList<>(grouped.keySet());
+        Collections.sort(months);
 
-            // Banner: month-year
+        for (String monthKey : months) {
+            Map<String, List<Expense>> dateMap = grouped.get(monthKey);
+
+            // ✅ Month banner always "September - 2025"
             TextView banner = new TextView(this);
             banner.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -79,28 +89,26 @@ public class MonthWiseActivity extends AppCompatActivity {
 
             double monthTotal = 0.0;
 
-            // Sort dates within the month
+            // Sort dates within the month (expect yyyy-MM-dd → lexicographic is chronological)
             List<String> dates = new ArrayList<>(dateMap.keySet());
             Collections.sort(dates, Comparator.naturalOrder());
 
             for (String date : dates) {
                 List<Expense> items = dateMap.get(date);
 
-                // Calculate total for the day
+                // Sum total for that day
                 double dayTotal = 0;
-                for (Expense e : items) {
-                    dayTotal += e.amount;
-                }
+                for (Expense e : items) dayTotal += e.amount;
                 monthTotal += dayTotal;
 
-                // Row: show date + total
+                // Row: date on left, total on right
                 View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
                 TextView textDescription = row.findViewById(R.id.text_description);
                 TextView textCategory   = row.findViewById(R.id.text_category);
                 TextView textAmount     = row.findViewById(R.id.text_amount);
 
-                textDescription.setText(formatFullDate(date)); // dd MMM. yyyy
+                textDescription.setText(formatFullDate(date)); // "20 Sep. 2025"
                 textCategory.setVisibility(View.GONE);
 
                 String formatted = String.format(Locale.ENGLISH, "%.2f %s", dayTotal, symbol);
@@ -109,10 +117,10 @@ public class MonthWiseActivity extends AppCompatActivity {
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 textAmount.setText(display);
 
-                // ✅ Click → open DayDetailActivity with *full date*
+                // Click → open DayDetailActivity with the *full date*
                 row.setOnClickListener(v -> {
                     Intent intent = new Intent(MonthWiseActivity.this, DayDetailActivity.class);
-                    intent.putExtra("selected_date", date); // pass yyyy-MM-dd
+                    intent.putExtra("selected_date", date); // yyyy-MM-dd expected
                     startActivity(intent);
                 });
 
@@ -165,6 +173,32 @@ public class MonthWiseActivity extends AppCompatActivity {
         return Math.round(dps * density);
     }
 
+    // ✅ Normalize any stored date into yyyy-MM (handles legacy formats)
+    private String formatToYearMonth(String raw) {
+        if (raw == null) return null;
+        String[] patterns = {
+                "yyyy-MM-dd",
+                "dd/MM/yyyy",
+                "MM/dd/yyyy",
+                "dd MMM yyyy",
+                "dd MMM. yyyy"
+        };
+        for (String p : patterns) {
+            try {
+                SimpleDateFormat in = new SimpleDateFormat(p, Locale.ENGLISH);
+                in.setLenient(false);
+                Date d = in.parse(raw);
+                if (d != null) {
+                    SimpleDateFormat out = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
+                    return out.format(d);
+                }
+            } catch (Exception ignore) {}
+        }
+        // If parsing failed (e.g., already "yyyy-MM"), return raw
+        return raw;
+    }
+
+    // yyyy-MM → "September - 2025"
     private String formatYearMonth(String raw) {
         try {
             SimpleDateFormat in = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
@@ -176,6 +210,7 @@ public class MonthWiseActivity extends AppCompatActivity {
         }
     }
 
+    // yyyy-MM-dd → "20 Sep. 2025"
     private String formatFullDate(String raw) {
         try {
             SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
