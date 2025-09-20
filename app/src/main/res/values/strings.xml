@@ -5,11 +5,13 @@
     <string name="category_prompt">Select Category</string>
 
     <string-array name="expense_categories">
-        <item>Food</item>
+        <item>Groceries</item>
+        <item>Household</item>
+        <item>Utilities</item>
+        <item>Medical</item>
         <item>Transport</item>
-        <item>Entertainment</item>
         <item>Shopping</item>
-        <item>Bills</item>
         <item>Other</item>
     </string-array>
+
 </resources>
