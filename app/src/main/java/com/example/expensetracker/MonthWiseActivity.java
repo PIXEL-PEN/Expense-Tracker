@@ -13,9 +13,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,9 +27,6 @@ public class MonthWiseActivity extends AppCompatActivity {
 
     private LinearLayout expensesContainer;
 
-    private final SimpleDateFormat parseFormat = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
-    private final SimpleDateFormat displayFormat = new SimpleDateFormat("MMM. yyyy", Locale.ENGLISH);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,42 +35,45 @@ public class MonthWiseActivity extends AppCompatActivity {
         expensesContainer = findViewById(R.id.monthwise_container);
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        // Load selected currency
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String code = prefs.getString("currency_code", "THB");
         String symbol = CurrencyUtils.symbolFor(code);
 
-        // Get all expenses
         List<Expense> allExpenses = ExpenseDatabase
                 .getDatabase(this)
                 .expenseDao()
                 .getAll();
 
-        // Group by month key
+        // ✅ Group strictly by month key (yyyy-MM)
         Map<String, List<Expense>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            String monthKey = extractMonthKey(e.date);
-            if (!grouped.containsKey(monthKey)) {
-                grouped.put(monthKey, new ArrayList<>());
-            }
-            grouped.get(monthKey).add(e);
+            if (e.date == null || e.date.length() < 7) continue;
+            String monthKey = e.date.substring(0, 7); // "2025-09"
+            grouped.computeIfAbsent(monthKey, k -> new ArrayList<>()).add(e);
         }
+
+        // Sort inside each month (oldest → newest)
+        for (List<Expense> items : grouped.values()) {
+            Collections.sort(items, Comparator.comparingInt(exp -> exp.id));
+        }
+
+        // Sort months by key (older months first)
+        List<String> months = new ArrayList<>(grouped.keySet());
+        Collections.sort(months);
 
         expensesContainer.removeAllViews();
 
-        // For each month: banner → rows → total
-        for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
-            String month = entry.getKey();
-            List<Expense> items = entry.getValue();
+        for (String monthKey : months) {
+            List<Expense> items = grouped.get(monthKey);
 
-            // Month banner
+            // ✅ Banner uses ONLY the monthKey, never row dates
             TextView banner = new TextView(this);
             banner.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     dp(36)
             ));
             banner.setBackgroundColor(0xFFE1C699);
-            banner.setText(month);
+            banner.setText(formatYearMonth(monthKey)); // e.g., "September - 2025"
             banner.setTextSize(16);
             banner.setTypeface(Typeface.DEFAULT_BOLD);
             banner.setTextColor(0xFF000000);
@@ -82,7 +83,6 @@ public class MonthWiseActivity extends AppCompatActivity {
 
             double total = 0.0;
 
-            // Rows for each expense in that month
             for (Expense e : items) {
                 View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
@@ -90,20 +90,21 @@ public class MonthWiseActivity extends AppCompatActivity {
                 TextView textCategory = row.findViewById(R.id.text_category);
                 TextView textAmount = row.findViewById(R.id.text_amount);
 
-                textDescription.setText(e.description);
-                textCategory.setText(e.date);
+                if (textDescription == null || textCategory == null || textAmount == null) {
+                    continue;
+                }
 
-                // Format amount + smaller currency symbol after the number
+                textDescription.setText(e.description);
+                textCategory.setText(e.category);
+
                 String formatted = String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
                 SpannableString display = new SpannableString(formatted);
                 int start = formatted.length() - symbol.length();
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
                 textAmount.setText(display);
 
                 expensesContainer.addView(row);
 
-                // Divider
                 View divider = new View(this);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, 1);
@@ -148,18 +149,20 @@ public class MonthWiseActivity extends AppCompatActivity {
         }
     }
 
-    private String extractMonthKey(String dateStr) {
-        try {
-            Date parsed = parseFormat.parse(dateStr);
-            if (parsed != null) {
-                return displayFormat.format(parsed); // Always "Sep. 2025"
-            }
-        } catch (ParseException ignored) {}
-        return dateStr; // fallback
-    }
-
     private int dp(int dps) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dps * density);
+    }
+
+    // ✅ Convert "yyyy-MM" → "MMMM - yyyy"
+    private String formatYearMonth(String raw) {
+        try {
+            SimpleDateFormat in = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
+            Date d = in.parse(raw);
+            SimpleDateFormat out = new SimpleDateFormat("MMMM - yyyy", Locale.ENGLISH);
+            return out.format(d);
+        } catch (Exception e) {
+            return raw;
+        }
     }
 }
