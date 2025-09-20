@@ -74,7 +74,7 @@ public class DateWiseActivity extends AppCompatActivity {
         for (String date : dates) {
             List<Expense> items = grouped.get(date);
 
-            // ✅ Banner with full date
+            // Banner with full date
             TextView banner = new TextView(this);
             banner.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -111,32 +111,34 @@ public class DateWiseActivity extends AppCompatActivity {
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 textAmount.setText(display);
 
-                // ✅ Clickable row: Expense Details dialog
+                // Clickable row: Expense Details dialog (ordered to match View All style you want)
                 row.setOnClickListener(v -> {
-                    String details = "Description: " + e.description + "\n"
-                            + "Category: " + e.category + "\n"
-                            + "Amount: " + String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol) + "\n"
-                            + "Date: " + formatFullDate(e.date);
+                    String details = "Category: " + e.category + "\n"
+                            + "Date: " + formatFullDate(e.date) + "\n"
+                            + "Item: " + e.description + "\n"
+                            + "Amount: " + String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
 
-                    new AlertDialog.Builder(DateWiseActivity.this)
+                    AlertDialog dialog = new AlertDialog.Builder(DateWiseActivity.this)
                             .setTitle("Expense Details")
                             .setMessage(details)
-                            // CLOSE (neutral button)
-                            .setNeutralButton("CLOSE", (d, which) -> d.dismiss())
-                            // DELETE (negative button, left)
-                            .setNegativeButton("DELETE", (d, which) -> {
+                            // CLOSE left (negative)
+                            .setNegativeButton("CLOSE", (d, which) -> d.dismiss())
+                            // DELETE middle/right (neutral)
+                            .setNeutralButton("DELETE", (d, which) -> {
                                 ExpenseDatabase.getDatabase(DateWiseActivity.this)
                                         .expenseDao()
                                         .delete(e);
                                 recreate();
                             })
-                            // EDIT (positive button, right)
+                            // EDIT right (positive, highlighted)
                             .setPositiveButton("EDIT", (d, which) -> {
                                 Intent intent = new Intent(DateWiseActivity.this, AddExpenseActivity.class);
                                 intent.putExtra("expense_id", e.id);
                                 startActivity(intent);
                             })
-                            .show();
+                            .create();
+
+                    dialog.show();
                 });
 
                 expensesContainer.addView(row);
@@ -189,7 +191,7 @@ public class DateWiseActivity extends AppCompatActivity {
         return Math.round(dps * density);
     }
 
-    // ✅ Force full date format "dd MMM. yyyy"
+    // Force full date format "dd MMM. yyyy"
     private String formatFullDate(String raw) {
         String[] patterns = {
                 "yyyy-MM-dd",
