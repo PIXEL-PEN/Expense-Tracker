@@ -1,6 +1,7 @@
 package com.example.expensetracker;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -9,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -50,8 +53,32 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         int start = formatted.length() - symbol.length();
         display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         holder.textAmount.setText(display);
+
+        // ✅ Row click → show details dialog
+        holder.itemView.setOnClickListener(v -> {
+            Context context = v.getContext();
+
+            new AlertDialog.Builder(context)
+                    .setTitle("Expense Details")
+                    .setMessage("Category: " + expense.category + "\n"
+                            + "Date: " + expense.date + "\n"
+                            + "Item: " + expense.description + "\n"
+                            + "Amount: " + formatted)
+                    .setPositiveButton("Edit", (dialog, which) -> {
+                        Intent intent = new Intent(context, AddExpenseActivity.class);
+                        intent.putExtra("expense_id", expense.id);  // pass ID for editing
+                        context.startActivity(intent);
+                    })
+                    .setNegativeButton("Delete", (dialog, which) -> {
+                        ExpenseDatabase.getDatabase(context).expenseDao().delete(expense);
+                        expenses.remove(position);
+                        notifyItemRemoved(position);
+                        Toast.makeText(context, "Expense deleted", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNeutralButton("Close", null)
+                    .show();
+        });
     }
 
     @Override

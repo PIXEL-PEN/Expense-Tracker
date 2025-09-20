@@ -1,8 +1,10 @@
 package com.example.expensetracker;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -12,26 +14,18 @@ public interface ExpenseDao {
     @Insert
     void insert(Expense expense);
 
-    // All expenses, oldest → newest
-    @Query("SELECT * FROM expenses ORDER BY date ASC")
+    @Update
+    void update(Expense expense);
+
+    @Delete
+    void delete(Expense expense);
+
+    @Query("SELECT * FROM expenses ORDER BY id DESC")
     List<Expense> getAll();
 
-    // By category, oldest → newest
-    @Query("SELECT * FROM expenses WHERE category = :category ORDER BY date ASC")
-    List<Expense> getByCategory(String category);
-
-    // Exact date match, oldest → newest
-    @Query("SELECT * FROM expenses WHERE date = :date ORDER BY date ASC")
-    List<Expense> getByExactDate(String date);
-
-    // Prefix match (e.g., "Sep 2025"), oldest → newest
-    @Query("SELECT * FROM expenses WHERE date LIKE :prefix || '%' ORDER BY date ASC")
-    List<Expense> getByDatePrefix(String prefix);
+    @Query("SELECT * FROM expenses WHERE id = :id LIMIT 1")
+    Expense getById(int id);
 
     @Query("DELETE FROM expenses")
     void clearAll();
-
-
-
-
 }
