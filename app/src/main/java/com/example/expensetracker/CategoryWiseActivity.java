@@ -1,5 +1,6 @@
 package com.example.expensetracker;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -31,12 +33,12 @@ public class CategoryWiseActivity extends AppCompatActivity {
         expensesContainer = findViewById(R.id.categorywise_container);
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        // Get currency choice
+        // Currency symbol
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String code = prefs.getString("currency_code", "THB");
         String symbol = CurrencyUtils.symbolFor(code);
 
-        // Get all expenses
+        // All expenses
         List<Expense> allExpenses = ExpenseDatabase
                 .getDatabase(this)
                 .expenseDao()
@@ -45,15 +47,12 @@ public class CategoryWiseActivity extends AppCompatActivity {
         // Group by category
         Map<String, List<Expense>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            if (!grouped.containsKey(e.category)) {
-                grouped.put(e.category, new ArrayList<>());
-            }
-            grouped.get(e.category).add(e);
+            grouped.computeIfAbsent(e.category, k -> new ArrayList<>()).add(e);
         }
 
         expensesContainer.removeAllViews();
 
-        // For each category: banner → rows → total
+        // For each category → banner, rows, total
         for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
             String category = entry.getKey();
             List<Expense> items = entry.getValue();
@@ -75,24 +74,51 @@ public class CategoryWiseActivity extends AppCompatActivity {
 
             double total = 0.0;
 
-            // Rows for each expense in the category
             for (Expense e : items) {
                 View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
                 TextView textDescription = row.findViewById(R.id.text_description);
-                TextView textCategory    = row.findViewById(R.id.text_category);
-                TextView textAmount      = row.findViewById(R.id.text_amount);
+                TextView textCategory = row.findViewById(R.id.text_category);
+                TextView textAmount = row.findViewById(R.id.text_amount);
+
+                if (textDescription == null || textCategory == null || textAmount == null) {
+                    continue;
+                }
 
                 textDescription.setText(e.description);
-                textCategory.setText(e.date);
+                textCategory.setText(e.date); // In category view, show date under description
 
-                // Format: amount + space + symbol (symbol slightly smaller)
+                // Format amount with smaller currency symbol
                 String formatted = String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
                 SpannableString display = new SpannableString(formatted);
                 int start = formatted.length() - symbol.length();
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
                 textAmount.setText(display);
+
+                // ✅ Make row clickable (force Delete left by declaration order)
+                row.setOnClickListener(v -> {
+                    String details = "Category: " + e.category + "\n"
+                            + "Date: " + e.date + "\n"
+                            + "Item: " + e.description + "\n"
+                            + "Amount: " + String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
+
+                    new AlertDialog.Builder(CategoryWiseActivity.this)
+                            .setTitle("Expense Details")
+                            .setMessage(details)
+                            .setPositiveButton("Edit", (d, which) -> {
+                                Intent intent = new Intent(CategoryWiseActivity.this, AddExpenseActivity.class);
+                                intent.putExtra("expense_id", e.id);
+                                startActivity(intent);
+                            })
+                            .setNeutralButton("Close", null)
+                            .setNegativeButton("Delete", (d, which) -> {
+                                ExpenseDatabase.getDatabase(CategoryWiseActivity.this)
+                                        .expenseDao()
+                                        .delete(e);
+                                recreate();
+                            })
+                            .show();
+                });
 
                 expensesContainer.addView(row);
 
@@ -129,7 +155,6 @@ public class CategoryWiseActivity extends AppCompatActivity {
             SpannableString totalDisplay = new SpannableString(totalFormatted);
             int start = totalFormatted.length() - symbol.length();
             totalDisplay.setSpan(new RelativeSizeSpan(0.85f), start, totalFormatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
             amountTv.setText(totalDisplay);
             amountTv.setTextSize(18);
             amountTv.setTypeface(Typeface.DEFAULT_BOLD);
