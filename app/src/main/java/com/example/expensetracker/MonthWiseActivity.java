@@ -1,5 +1,6 @@
 package com.example.expensetracker;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -44,36 +45,31 @@ public class MonthWiseActivity extends AppCompatActivity {
                 .expenseDao()
                 .getAll();
 
-        // ✅ Group by normalized month key (yyyy-MM)
-        Map<String, List<Expense>> grouped = new LinkedHashMap<>();
+        // Group by month -> then by full date
+        Map<String, Map<String, List<Expense>>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            String monthKey = formatToYearMonth(e.date);
-            if (monthKey == null) continue;
-            grouped.computeIfAbsent(monthKey, k -> new ArrayList<>()).add(e);
+            String monthKey = e.date.substring(0, 7); // yyyy-MM
+            grouped.putIfAbsent(monthKey, new LinkedHashMap<>());
+            Map<String, List<Expense>> dateMap = grouped.get(monthKey);
+            dateMap.putIfAbsent(e.date, new ArrayList<>()); // full yyyy-MM-dd
+            dateMap.get(e.date).add(e);
         }
-
-        // Sort items within each month (oldest → newest)
-        for (List<Expense> items : grouped.values()) {
-            Collections.sort(items, Comparator.comparingInt(exp -> exp.id));
-        }
-
-        // Sort months chronologically
-        List<String> months = new ArrayList<>(grouped.keySet());
-        Collections.sort(months);
 
         expensesContainer.removeAllViews();
 
-        for (String monthKey : months) {
-            List<Expense> items = grouped.get(monthKey);
+        // Loop through each month
+        for (Map.Entry<String, Map<String, List<Expense>>> monthEntry : grouped.entrySet()) {
+            String monthKey = monthEntry.getKey();
+            Map<String, List<Expense>> dateMap = monthEntry.getValue();
 
-            // ✅ Banner shows month + year
+            // Banner: month-year
             TextView banner = new TextView(this);
             banner.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     dp(36)
             ));
             banner.setBackgroundColor(0xFFE1C699);
-            banner.setText(formatYearMonth(monthKey));  // guaranteed "MMMM - yyyy"
+            banner.setText(formatYearMonth(monthKey));
             banner.setTextSize(16);
             banner.setTypeface(Typeface.DEFAULT_BOLD);
             banner.setTextColor(0xFF000000);
@@ -81,31 +77,44 @@ public class MonthWiseActivity extends AppCompatActivity {
             banner.setPadding(dp(16), 0, 0, 0);
             expensesContainer.addView(banner);
 
-            double total = 0.0;
+            double monthTotal = 0.0;
 
-            for (Expense e : items) {
+            // Sort dates within the month
+            List<String> dates = new ArrayList<>(dateMap.keySet());
+            Collections.sort(dates, Comparator.naturalOrder());
+
+            for (String date : dates) {
+                List<Expense> items = dateMap.get(date);
+
+                // Calculate total for the day
+                double dayTotal = 0;
+                for (Expense e : items) {
+                    dayTotal += e.amount;
+                }
+                monthTotal += dayTotal;
+
+                // Row: show date + total
                 View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
                 TextView textDescription = row.findViewById(R.id.text_description);
                 TextView textCategory   = row.findViewById(R.id.text_category);
                 TextView textAmount     = row.findViewById(R.id.text_amount);
 
-                if (textDescription == null || textCategory == null || textAmount == null) {
-                    continue;
-                }
-
-                // ✅ Show full date on the left
-                textDescription.setText(formatFullDate(e.date));
-
-                // ✅ Hide category
+                textDescription.setText(formatFullDate(date)); // dd MMM. yyyy
                 textCategory.setVisibility(View.GONE);
 
-                // ✅ Format amount with smaller currency symbol
-                String formatted = String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
+                String formatted = String.format(Locale.ENGLISH, "%.2f %s", dayTotal, symbol);
                 SpannableString display = new SpannableString(formatted);
                 int start = formatted.length() - symbol.length();
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 textAmount.setText(display);
+
+                // ✅ Click → open DayDetailActivity with *full date*
+                row.setOnClickListener(v -> {
+                    Intent intent = new Intent(MonthWiseActivity.this, DayDetailActivity.class);
+                    intent.putExtra("selected_date", date); // pass yyyy-MM-dd
+                    startActivity(intent);
+                });
 
                 expensesContainer.addView(row);
 
@@ -116,11 +125,9 @@ public class MonthWiseActivity extends AppCompatActivity {
                 divider.setLayoutParams(lp);
                 divider.setBackgroundColor(0xFF888888);
                 expensesContainer.addView(divider);
-
-                total += e.amount;
             }
 
-            // ✅ TOTAL row
+            // TOTAL row for the month
             LinearLayout totalRow = new LinearLayout(this);
             totalRow.setOrientation(LinearLayout.HORIZONTAL);
             totalRow.setPadding(dp(12), dp(12), dp(12), dp(12));
@@ -138,11 +145,10 @@ public class MonthWiseActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            String totalFormatted = String.format(Locale.ENGLISH, "%.2f %s", total, symbol);
+            String totalFormatted = String.format(Locale.ENGLISH, "%.2f %s", monthTotal, symbol);
             SpannableString totalDisplay = new SpannableString(totalFormatted);
             int start = totalFormatted.length() - symbol.length();
             totalDisplay.setSpan(new RelativeSizeSpan(0.85f), start, totalFormatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
             amountTv.setText(totalDisplay);
             amountTv.setTextSize(18);
             amountTv.setTypeface(Typeface.DEFAULT_BOLD);
@@ -159,31 +165,6 @@ public class MonthWiseActivity extends AppCompatActivity {
         return Math.round(dps * density);
     }
 
-    // ✅ Normalize any date into yyyy-MM for grouping
-    private String formatToYearMonth(String raw) {
-        if (raw == null) return null;
-        String[] patterns = {
-                "yyyy-MM-dd",
-                "dd/MM/yyyy",
-                "MM/dd/yyyy",
-                "dd MMM yyyy",
-                "dd MMM. yyyy"
-        };
-        for (String p : patterns) {
-            try {
-                SimpleDateFormat in = new SimpleDateFormat(p, Locale.ENGLISH);
-                in.setLenient(false);
-                Date d = in.parse(raw);
-                if (d != null) {
-                    SimpleDateFormat out = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
-                    return out.format(d);
-                }
-            } catch (Exception ignore) {}
-        }
-        return raw;
-    }
-
-    // ✅ Banner formatter: yyyy-MM → "September - 2025"
     private String formatYearMonth(String raw) {
         try {
             SimpleDateFormat in = new SimpleDateFormat("yyyy-MM", Locale.ENGLISH);
@@ -195,27 +176,14 @@ public class MonthWiseActivity extends AppCompatActivity {
         }
     }
 
-    // ✅ Row formatter: yyyy-MM-dd → "20 Sep. 2025"
     private String formatFullDate(String raw) {
-        if (raw == null) return "";
-        String[] patterns = {
-                "yyyy-MM-dd",
-                "dd/MM/yyyy",
-                "MM/dd/yyyy",
-                "dd MMM yyyy",
-                "dd MMM. yyyy"
-        };
-        for (String p : patterns) {
-            try {
-                SimpleDateFormat in = new SimpleDateFormat(p, Locale.ENGLISH);
-                in.setLenient(false);
-                Date d = in.parse(raw);
-                if (d != null) {
-                    SimpleDateFormat out = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
-                    return out.format(d);
-                }
-            } catch (Exception ignore) {}
+        try {
+            SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            Date d = in.parse(raw);
+            SimpleDateFormat out = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
+            return out.format(d);
+        } catch (Exception e) {
+            return raw;
         }
-        return raw;
     }
 }

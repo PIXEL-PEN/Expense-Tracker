@@ -19,6 +19,8 @@
         <activity android:name=".MonthWiseActivity" android:exported="false" />
         <activity android:name=".CategoryWiseActivity" android:exported="false" />
 
+        <activity android:name=".DayDetailActivity" />
+
         <!-- Main launcher -->
         <activity
             android:name=".MainActivity"
