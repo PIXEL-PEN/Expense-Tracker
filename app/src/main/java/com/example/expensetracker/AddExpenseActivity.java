@@ -45,9 +45,12 @@ public class AddExpenseActivity extends AppCompatActivity {
         // ✅ Load categories dynamically
         categories = new ArrayList<>(CategoryManager.getCategories(this));
         categories.add("➕ Manage Categories"); // special entry
-        categoryAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, categories);
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categoryAdapter = new ArrayAdapter<>(
+                this,
+                R.layout.spinner_item_selected,   // bold for selected item
+                categories
+        );
+        categoryAdapter.setDropDownViewResource(R.layout.spinner_item_dropdown); // normal for dropdown
         spinnerCategory.setAdapter(categoryAdapter);
 
         // Handle category management
