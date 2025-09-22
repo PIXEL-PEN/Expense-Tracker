@@ -61,7 +61,7 @@ public class CategoryWiseActivity extends AppCompatActivity {
             TextView banner = new TextView(this);
             banner.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    dp(36)
+                    dp(29)
             ));
             banner.setBackgroundColor(0xFFE1C699);
             banner.setText(category);
