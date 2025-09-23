@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Top bar -->
+        <!-- Top bar (unchanged for consistency) -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="96dp"
@@ -27,8 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
             android:text="Select Currency"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -57,8 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
             android:text="Date Format"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -87,8 +87,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
             android:text="Export Database"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -110,8 +110,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
             android:text="Reset Database"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -133,8 +133,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
             android:text="About"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -143,9 +143,9 @@
         <TextView
             android:id="@+id/text_about"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:padding="24dp"
-            android:text="Expense Tracker v1.0\n\n© PIXEL-PEN\n\nA simple, offline expense management app with export and reset functions."
+            android:text="Expense Tracker v1.0\n\n© 2025 PIXEL-PEN\n\nDesigned for daily use as a simple, offline budgeting tool.\n\nFeatures: quick expense entry, multiple views, export to CSV, and database reset."
             android:textSize="16sp"
             android:gravity="top|start" />
     </LinearLayout>
