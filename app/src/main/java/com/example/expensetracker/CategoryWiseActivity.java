@@ -15,7 +15,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,12 +37,10 @@ public class CategoryWiseActivity extends AppCompatActivity {
         expensesContainer = findViewById(R.id.categorywise_container);
         LayoutInflater inflater = LayoutInflater.from(this);
 
-        // Currency symbol
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String code = prefs.getString("currency_code", "THB");
         String symbol = CurrencyUtils.symbolFor(code);
 
-        // All expenses
         List<Expense> allExpenses = ExpenseDatabase
                 .getDatabase(this)
                 .expenseDao()
@@ -47,15 +49,28 @@ public class CategoryWiseActivity extends AppCompatActivity {
         // Group by category
         Map<String, List<Expense>> grouped = new LinkedHashMap<>();
         for (Expense e : allExpenses) {
-            grouped.computeIfAbsent(e.category, k -> new ArrayList<>()).add(e);
+            if (!grouped.containsKey(e.category)) {
+                grouped.put(e.category, new ArrayList<>());
+            }
+            grouped.get(e.category).add(e);
         }
 
         expensesContainer.removeAllViews();
 
-        // For each category → banner, rows, total
-        for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
+        // Sort categories by latest expense date → newest first
+        List<Map.Entry<String, List<Expense>>> categories = new ArrayList<>(grouped.entrySet());
+        Collections.sort(categories, (a, b) -> {
+            String latestA = latestDate(a.getValue());
+            String latestB = latestDate(b.getValue());
+            return latestB.compareTo(latestA);
+        });
+
+        for (Map.Entry<String, List<Expense>> entry : categories) {
             String category = entry.getKey();
             List<Expense> items = entry.getValue();
+
+            // Rows ledger style → oldest first
+            Collections.sort(items, Comparator.comparing(e -> e.date));
 
             // Category banner
             TextView banner = new TextView(this);
@@ -72,52 +87,51 @@ public class CategoryWiseActivity extends AppCompatActivity {
             banner.setPadding(dp(16), 0, 0, 0);
             expensesContainer.addView(banner);
 
-            double total = 0.0;
+            double catTotal = 0.0;
 
             for (Expense e : items) {
+                catTotal += e.amount;
+
                 View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
                 TextView textDescription = row.findViewById(R.id.text_description);
-                TextView textCategory = row.findViewById(R.id.text_category);
-                TextView textAmount = row.findViewById(R.id.text_amount);
-
-                if (textDescription == null || textCategory == null || textAmount == null) {
-                    continue;
-                }
+                TextView textCategory   = row.findViewById(R.id.text_category);
+                TextView textAmount     = row.findViewById(R.id.text_amount);
 
                 textDescription.setText(e.description);
-                textCategory.setText(e.date); // In category view, show date under description
+                textCategory.setText(formatFullDate(e.date));
 
-                // Format amount with smaller currency symbol
                 String formatted = String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
                 SpannableString display = new SpannableString(formatted);
                 int start = formatted.length() - symbol.length();
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 textAmount.setText(display);
 
-                // ✅ Make row clickable (force Delete left by declaration order)
+                // ✅ Same edit/delete dialog as DateWise
                 row.setOnClickListener(v -> {
                     String details = "Category: " + e.category + "\n"
-                            + "Date: " + e.date + "\n"
+                            + "Date: " + formatFullDate(e.date) + "\n"
                             + "Item: " + e.description + "\n"
                             + "Amount: " + String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
 
-                    new AlertDialog.Builder(CategoryWiseActivity.this)
+                    AlertDialog dialog = new AlertDialog.Builder(CategoryWiseActivity.this)
                             .setTitle("Expense Details")
                             .setMessage(details)
-                            .setPositiveButton("Edit", (d, which) -> {
-                                Intent intent = new Intent(CategoryWiseActivity.this, AddExpenseActivity.class);
-                                intent.putExtra("expense_id", e.id);
-                                startActivity(intent);
-                            })
-                            .setNeutralButton("Close", null)
-                            .setNegativeButton("Delete", (d, which) -> {
+                            .setNegativeButton("CLOSE", (d, which) -> d.dismiss())
+                            .setNeutralButton("DELETE", (d, which) -> {
                                 ExpenseDatabase.getDatabase(CategoryWiseActivity.this)
                                         .expenseDao()
                                         .delete(e);
                                 recreate();
                             })
-                            .show();
+                            .setPositiveButton("EDIT", (d, which) -> {
+                                Intent intent = new Intent(CategoryWiseActivity.this, AddExpenseActivity.class);
+                                intent.putExtra("expense_id", e.id);
+                                startActivity(intent);
+                            })
+                            .create();
+
+                    dialog.show();
                 });
 
                 expensesContainer.addView(row);
@@ -129,8 +143,6 @@ public class CategoryWiseActivity extends AppCompatActivity {
                 divider.setLayoutParams(lp);
                 divider.setBackgroundColor(0xFF888888);
                 expensesContainer.addView(divider);
-
-                total += e.amount;
             }
 
             // TOTAL row
@@ -151,7 +163,7 @@ public class CategoryWiseActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            String totalFormatted = String.format(Locale.ENGLISH, "%.2f %s", total, symbol);
+            String totalFormatted = String.format(Locale.ENGLISH, "%.2f %s", catTotal, symbol);
             SpannableString totalDisplay = new SpannableString(totalFormatted);
             int start = totalFormatted.length() - symbol.length();
             totalDisplay.setSpan(new RelativeSizeSpan(0.85f), start, totalFormatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -169,5 +181,28 @@ public class CategoryWiseActivity extends AppCompatActivity {
     private int dp(int dps) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dps * density);
+    }
+
+    // Helper: latest date in a category (for sorting banners)
+    private String latestDate(List<Expense> list) {
+        String latest = "";
+        for (Expense e : list) {
+            if (e.date != null && e.date.compareTo(latest) > 0) {
+                latest = e.date;
+            }
+        }
+        return latest;
+    }
+
+    // yyyy-MM-dd → "20 Sep. 2025"
+    private String formatFullDate(String raw) {
+        try {
+            SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            Date d = in.parse(raw);
+            SimpleDateFormat out = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
+            return out.format(d);
+        } catch (Exception e) {
+            return raw;
+        }
     }
 }

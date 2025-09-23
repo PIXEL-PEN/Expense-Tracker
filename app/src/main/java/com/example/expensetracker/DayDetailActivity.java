@@ -16,93 +16,99 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class DayDetailActivity extends AppCompatActivity {
 
-    private LinearLayout container;
+    private LinearLayout expensesContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_detail);
 
-        container = findViewById(R.id.daydetail_container);
+        expensesContainer = findViewById(R.id.daydetail_container);
         LayoutInflater inflater = LayoutInflater.from(this);
-
-        // Get selected date from intent
-        String date = getIntent().getStringExtra("selected_date");
 
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String code = prefs.getString("currency_code", "THB");
         String symbol = CurrencyUtils.symbolFor(code);
 
+        String selectedDate = getIntent().getStringExtra("selected_date");
+        if (selectedDate == null) {
+            finish();
+            return;
+        }
+
         List<Expense> expenses = ExpenseDatabase
                 .getDatabase(this)
                 .expenseDao()
-                .getByDate(date);
+                .getByDate(selectedDate);
 
-        double total = 0;
+        expensesContainer.removeAllViews();
 
-        // Banner with full formatted date
+        // Banner for the day
         TextView banner = new TextView(this);
         banner.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 dp(29)
         ));
         banner.setBackgroundColor(0xFFE1C699);
-        banner.setText(formatFullDate(date));
+        banner.setText(formatFullDate(selectedDate));
         banner.setTextSize(16);
         banner.setTypeface(Typeface.DEFAULT_BOLD);
         banner.setTextColor(0xFF000000);
-        banner.setGravity(android.view.Gravity.BOTTOM | android.view.Gravity.START);
-        banner.setPadding(dp(16), 0, 0, dp(4)); // slight bottom padding to lower text
-        container.addView(banner);
+        banner.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START);
+        banner.setPadding(dp(16), 0, 0, 0);
+        expensesContainer.addView(banner);
+
+        double total = 0.0;
 
         for (Expense e : expenses) {
-            View row = inflater.inflate(R.layout.item_expense_date_row, container, false);
+            View row = inflater.inflate(R.layout.item_expense_date_row, expensesContainer, false);
 
-            TextView desc = row.findViewById(R.id.text_description);
-            TextView cat = row.findViewById(R.id.text_category);
-            TextView amt = row.findViewById(R.id.text_amount);
+            TextView textDescription = row.findViewById(R.id.text_description);
+            TextView textCategory   = row.findViewById(R.id.text_category);
+            TextView textAmount     = row.findViewById(R.id.text_amount);
 
-            desc.setText(e.description);
-            cat.setText(e.category);
+            textDescription.setText(e.description);
+            textCategory.setText(e.category);
 
             String formatted = String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
             SpannableString display = new SpannableString(formatted);
             int start = formatted.length() - symbol.length();
             display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            amt.setText(display);
+            textAmount.setText(display);
 
-            // Clickable row: Expense Details dialog
+            // Edit/Delete dialog
             row.setOnClickListener(v -> {
                 String details = "Category: " + e.category + "\n"
                         + "Date: " + formatFullDate(e.date) + "\n"
                         + "Item: " + e.description + "\n"
-                        + "Amount: " + formatted;
+                        + "Amount: " + String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
 
-                new AlertDialog.Builder(DayDetailActivity.this)
+                AlertDialog dialog = new AlertDialog.Builder(DayDetailActivity.this)
                         .setTitle("Expense Details")
                         .setMessage(details)
-                        .setNegativeButton("CLOSE", (d, w) -> d.dismiss())
-                        .setNeutralButton("DELETE", (d, w) -> {
+                        .setNegativeButton("CLOSE", (d, which) -> d.dismiss())
+                        .setNeutralButton("DELETE", (d, which) -> {
                             ExpenseDatabase.getDatabase(DayDetailActivity.this)
                                     .expenseDao()
                                     .delete(e);
                             recreate();
                         })
-                        .setPositiveButton("EDIT", (d, w) -> {
+                        .setPositiveButton("EDIT", (d, which) -> {
                             Intent intent = new Intent(DayDetailActivity.this, AddExpenseActivity.class);
                             intent.putExtra("expense_id", e.id);
                             startActivity(intent);
                         })
-                        .show();
+                        .create();
+
+                dialog.show();
             });
 
-            container.addView(row);
+            expensesContainer.addView(row);
 
             // Divider
             View divider = new View(this);
@@ -110,15 +116,17 @@ public class DayDetailActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT, 1);
             divider.setLayoutParams(lp);
             divider.setBackgroundColor(0xFF888888);
-            container.addView(divider);
+            expensesContainer.addView(divider);
 
             total += e.amount;
         }
 
-        // Total row
+        // TOTAL row
         LinearLayout totalRow = new LinearLayout(this);
         totalRow.setOrientation(LinearLayout.HORIZONTAL);
-        totalRow.setPadding(dp(12), dp(12), dp(12), dp(12));
+        // 👇 extra bottom padding to avoid overlap with nav bar
+        totalRow.setPadding(dp(12), dp(12), dp(12), dp(48));
+
 
         TextView label = new TextView(this);
         label.setLayoutParams(new LinearLayout.LayoutParams(
@@ -144,7 +152,7 @@ public class DayDetailActivity extends AppCompatActivity {
 
         totalRow.addView(label);
         totalRow.addView(amountTv);
-        container.addView(totalRow);
+        expensesContainer.addView(totalRow);
     }
 
     private int dp(int dps) {
@@ -152,13 +160,11 @@ public class DayDetailActivity extends AppCompatActivity {
         return Math.round(dps * density);
     }
 
-    // Format yyyy-MM-dd → "20 Sep. 2025"
     private String formatFullDate(String raw) {
         try {
             SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            Date d = in.parse(raw);
-            SimpleDateFormat out = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
-            return out.format(d);
+            return new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH)
+                    .format(in.parse(raw));
         } catch (Exception e) {
             return raw;
         }
