@@ -52,22 +52,19 @@ public class DateWiseActivity extends AppCompatActivity {
             grouped.computeIfAbsent(e.date, k -> new ArrayList<>()).add(e);
         }
 
-        // Sort items within each date (oldest → newest)
+        // Sort items within each date (oldest → newest by id)
         for (List<Expense> items : grouped.values()) {
             Collections.sort(items, Comparator.comparingInt(exp -> exp.id));
         }
 
-        // Sort the date groups by earliest id
-        Map<String, Integer> dateMinId = new LinkedHashMap<>();
-        for (Map.Entry<String, List<Expense>> entry : grouped.entrySet()) {
-            int minId = Integer.MAX_VALUE;
-            for (Expense e : entry.getValue()) {
-                if (e.id < minId) minId = e.id;
-            }
-            dateMinId.put(entry.getKey(), minId);
-        }
+        // Sort the date groups by actual date (newest → oldest)
         List<String> dates = new ArrayList<>(grouped.keySet());
-        Collections.sort(dates, Comparator.comparingInt(dateMinId::get));
+        Collections.sort(dates, (d1, d2) -> {
+            Date date1 = parseDate(d1);
+            Date date2 = parseDate(d2);
+            if (date1 == null || date2 == null) return d1.compareTo(d2);
+            return date2.compareTo(date1); // reverse order: newest first
+        });
 
         expensesContainer.removeAllViews();
 
@@ -111,7 +108,7 @@ public class DateWiseActivity extends AppCompatActivity {
                 display.setSpan(new RelativeSizeSpan(0.85f), start, formatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 textAmount.setText(display);
 
-                // Clickable row: Expense Details dialog (ordered to match View All style you want)
+                // Clickable row: Expense Details dialog
                 row.setOnClickListener(v -> {
                     String details = "Category: " + e.category + "\n"
                             + "Date: " + formatFullDate(e.date) + "\n"
@@ -121,16 +118,13 @@ public class DateWiseActivity extends AppCompatActivity {
                     AlertDialog dialog = new AlertDialog.Builder(DateWiseActivity.this)
                             .setTitle("Expense Details")
                             .setMessage(details)
-                            // CLOSE left (negative)
                             .setNegativeButton("CLOSE", (d, which) -> d.dismiss())
-                            // DELETE middle/right (neutral)
                             .setNeutralButton("DELETE", (d, which) -> {
                                 ExpenseDatabase.getDatabase(DateWiseActivity.this)
                                         .expenseDao()
                                         .delete(e);
                                 recreate();
                             })
-                            // EDIT right (positive, highlighted)
                             .setPositiveButton("EDIT", (d, which) -> {
                                 Intent intent = new Intent(DateWiseActivity.this, AddExpenseActivity.class);
                                 intent.putExtra("expense_id", e.id);
@@ -191,8 +185,8 @@ public class DateWiseActivity extends AppCompatActivity {
         return Math.round(dps * density);
     }
 
-    // Force full date format "dd MMM. yyyy"
-    private String formatFullDate(String raw) {
+    // Parse raw date string into Date object
+    private Date parseDate(String raw) {
         String[] patterns = {
                 "yyyy-MM-dd",
                 "dd/MM/yyyy",
@@ -204,12 +198,18 @@ public class DateWiseActivity extends AppCompatActivity {
             try {
                 SimpleDateFormat in = new SimpleDateFormat(p, Locale.ENGLISH);
                 in.setLenient(false);
-                Date d = in.parse(raw);
-                if (d != null) {
-                    SimpleDateFormat out = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
-                    return out.format(d);
-                }
+                return in.parse(raw);
             } catch (Exception ignore) {}
+        }
+        return null;
+    }
+
+    // Force full date format "dd MMM. yyyy"
+    private String formatFullDate(String raw) {
+        Date d = parseDate(raw);
+        if (d != null) {
+            SimpleDateFormat out = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
+            return out.format(d);
         }
         return raw;
     }
