@@ -16,7 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;   // ✅ important import
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,14 +50,15 @@ public class DayDetailActivity extends AppCompatActivity {
         TextView banner = new TextView(this);
         banner.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(36)
+                dp(29)
         ));
         banner.setBackgroundColor(0xFFE1C699);
         banner.setText(formatFullDate(date));
         banner.setTextSize(16);
         banner.setTypeface(Typeface.DEFAULT_BOLD);
         banner.setTextColor(0xFF000000);
-        banner.setPadding(dp(16), 0, 0, 0);
+        banner.setGravity(android.view.Gravity.BOTTOM | android.view.Gravity.START);
+        banner.setPadding(dp(16), 0, 0, dp(4)); // slight bottom padding to lower text
         container.addView(banner);
 
         for (Expense e : expenses) {
