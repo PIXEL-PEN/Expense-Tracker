@@ -43,7 +43,10 @@ public class AddExpenseActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btn_save);
 
         // ✅ Load categories dynamically
-        categories = new ArrayList<>(CategoryManager.getCategories(this));
+        categories = new ArrayList<>(CategoryManager.getOrderedCategories(this));
+
+
+
         categories.add("➕ Manage Categories"); // special entry
         categoryAdapter = new ArrayAdapter<>(
                 this,

@@ -16,6 +16,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,6 +47,21 @@ public class DayDetailActivity extends AppCompatActivity {
 
         expensesContainer.removeAllViews();
 
+        // ✅ Date banner at top
+        TextView banner = new TextView(this);
+        banner.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(29)
+        ));
+        banner.setBackgroundColor(0xFFE1C699);
+        banner.setText(formatFullDate(selectedDate));
+        banner.setTextSize(16);
+        banner.setTypeface(Typeface.DEFAULT_BOLD);
+        banner.setTextColor(0xFF000000);
+        banner.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START);
+        banner.setPadding(dp(16), 0, 0, 0);
+        expensesContainer.addView(banner);
+
         double total = 0.0;
 
         for (Expense e : expenses) {
@@ -66,7 +83,7 @@ public class DayDetailActivity extends AppCompatActivity {
             // Click → edit/delete dialog
             row.setOnClickListener(v -> {
                 String details = "Category: " + e.category + "\n"
-                        + "Date: " + e.date + "\n"
+                        + "Date: " + formatFullDate(e.date) + "\n"
                         + "Item: " + e.description + "\n"
                         + "Amount: " + String.format(Locale.ENGLISH, "%.2f %s", e.amount, symbol);
 
@@ -121,7 +138,6 @@ public class DayDetailActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        // ✅ DecimalFormat with comma separators
         DecimalFormat df = new DecimalFormat("#,##0.00");
         String totalFormatted = df.format(total) + " " + symbol;
 
@@ -146,5 +162,17 @@ public class DayDetailActivity extends AppCompatActivity {
     private int dp(int dps) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dps * density);
+    }
+
+    // ✅ Format YYYY-MM-DD → "25 Sep. 2025"
+    private String formatFullDate(String raw) {
+        try {
+            SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            Date d = in.parse(raw);
+            SimpleDateFormat out = new SimpleDateFormat("dd MMM. yyyy", Locale.ENGLISH);
+            return out.format(d);
+        } catch (Exception e) {
+            return raw;
+        }
     }
 }
