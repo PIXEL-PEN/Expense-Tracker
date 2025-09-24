@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -165,7 +166,10 @@ public class DateWiseActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            String totalFormatted = String.format(Locale.ENGLISH, "%.2f %s", total, symbol);
+            // ✅ Use DecimalFormat for comma separators
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+            String totalFormatted = df.format(total) + " " + symbol;
+
             SpannableString totalDisplay = new SpannableString(totalFormatted);
             int start = totalFormatted.length() - symbol.length();
             totalDisplay.setSpan(new RelativeSizeSpan(0.85f), start, totalFormatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
