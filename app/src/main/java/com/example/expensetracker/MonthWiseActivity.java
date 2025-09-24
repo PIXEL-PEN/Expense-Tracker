@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.text.DecimalFormat;
 
 public class MonthWiseActivity extends AppCompatActivity {
 
@@ -151,10 +152,18 @@ public class MonthWiseActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            String totalFormatted = String.format(Locale.ENGLISH, "%.2f %s", monthTotal, symbol);
-            SpannableString totalDisplay = new SpannableString(totalFormatted);
-            int start = totalFormatted.length() - symbol.length();
-            totalDisplay.setSpan(new RelativeSizeSpan(0.85f), start, totalFormatted.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            // ✅ Format with comma separators
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+            String formattedTotal = df.format(monthTotal) + " " + symbol;
+
+            SpannableString totalDisplay = new SpannableString(formattedTotal);
+            int start = formattedTotal.length() - symbol.length();
+            totalDisplay.setSpan(
+                    new RelativeSizeSpan(0.85f),
+                    start,
+                    formattedTotal.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
             amountTv.setText(totalDisplay);
             amountTv.setTextSize(18);
             amountTv.setTypeface(Typeface.DEFAULT_BOLD);
