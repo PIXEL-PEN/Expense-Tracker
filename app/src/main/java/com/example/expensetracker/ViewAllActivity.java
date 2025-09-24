@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.text.DecimalFormat;
 
 public class ViewAllActivity extends AppCompatActivity {
 
@@ -64,7 +65,9 @@ public class ViewAllActivity extends AppCompatActivity {
         String code = prefs.getString("currency_code", "THB");
         String symbol = CurrencyUtils.symbolFor(code);
 
-        String formattedTotal = String.format(Locale.ENGLISH, "%.2f %s", total, symbol);
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        String formattedTotal = df.format(total) + " " + symbol;
+
         SpannableString totalDisplay = new SpannableString(formattedTotal);
         int start = formattedTotal.length() - symbol.length();
         totalDisplay.setSpan(
