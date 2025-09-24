@@ -127,7 +127,6 @@
             android:backgroundTint="@null"
             android:textColor="@android:color/white"
             android:textAllCaps="false" />
-
         <!-- About -->
         <TextView
             android:layout_width="match_parent"
@@ -145,8 +144,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="24dp"
-            android:text="Expense Tracker v1.0\n\n© 2025 PIXEL-PEN\n\nDesigned for daily use as a simple, offline budgeting tool.\n\nFeatures: quick expense entry, multiple views, export to CSV, and database reset."
+            android:text="Expense Tracker v1.0\n\n© 2025 PIXEL-PEN\n\nDesigned for daily use as a simple, offline budgeting tool.\n\nFeatures: quick expense entry, multiple views, export to CSV and HTML, and database reset."
             android:textSize="16sp"
+            android:lineSpacingExtra="1dp"
             android:gravity="top|start" />
+
     </LinearLayout>
 </ScrollView>

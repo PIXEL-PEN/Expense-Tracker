@@ -15,7 +15,7 @@ public class CategoryManager {
 
     // Default categories
     private static final List<String> DEFAULT_CATEGORIES = Arrays.asList(
-            "Groceries", "Household", "Utilities", "Medical", "Transport", "Shopping", "Other"
+            "Groceries", "Rent", "Utilities", "Bills", "Transport", "Other"
     );
 
     public static List<String> getCategories(Context context) {
