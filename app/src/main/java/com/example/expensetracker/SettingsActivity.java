@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +30,13 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+
+        // ---------------- About Feedback Link ----------------
+        TextView about = findViewById(R.id.text_about);
+        if (about != null) {
+            about.setText(Html.fromHtml(getString(R.string.about_text)));
+            about.setMovementMethod(LinkMovementMethod.getInstance());
+        }
 
         // ---------------- Currency Spinner ----------------
         spinnerCurrency = findViewById(R.id.spinner_currency);
