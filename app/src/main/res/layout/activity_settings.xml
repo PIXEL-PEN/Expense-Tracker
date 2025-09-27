@@ -127,7 +127,7 @@
             android:backgroundTint="@null"
             android:textColor="@android:color/white"
             android:textAllCaps="false" />
-        <!-- About -->
+        <!-- About header -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -139,16 +139,18 @@
             android:textStyle="bold"
             android:background="#CFD8DC" />
 
+        <!-- About body -->
         <TextView
             android:id="@+id/text_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="24dp"
-            android:text="Expense Tracker v1.0\n\n© 2025 PIXEL-PEN\n\nDesigned for daily use as a simple, offline budgeting tool.\n\nFeatures: quick expense entry, multiple views, export to CSV and HTML, and database reset.\n\nFeedback:\nhttps://github.com/PIXEL-PEN/Expense-Tracker/discussions"
+            android:text="@string/about_text"
             android:textSize="16sp"
             android:gravity="top|start"
-            android:autoLink="web"
-            android:linksClickable="true" />
+            android:linksClickable="true"
+            android:focusable="true"
+            android:clickable="true" />
 
 
     </LinearLayout>
