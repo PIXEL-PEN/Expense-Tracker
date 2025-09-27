@@ -34,9 +34,12 @@ public class SettingsActivity extends AppCompatActivity {
         // ---------------- About Feedback Link ----------------
         TextView about = findViewById(R.id.text_about);
         if (about != null) {
-            about.setText(Html.fromHtml(getString(R.string.about_text)));
+            about.setText(Html.fromHtml(getString(R.string.about_text), Html.FROM_HTML_MODE_LEGACY));
+
             about.setMovementMethod(LinkMovementMethod.getInstance());
+            about.setLinksClickable(true);
         }
+
 
         // ---------------- Currency Spinner ----------------
         spinnerCurrency = findViewById(R.id.spinner_currency);
