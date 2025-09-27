@@ -27,6 +27,21 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
+    // ✅ Flavors restored
+    flavorDimensions "mode"
+    productFlavors {
+        releaseflavor {
+            dimension "mode"
+            resValue "string", "app_name", "ExpTracker"
+        }
+        dev {
+            dimension "mode"
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "ExpTrack-dev"
+            versionNameSuffix "-dev"
+        }
+    }
 }
 
 dependencies {
