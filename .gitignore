@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+ExpenseTracker-release-key.jks
+# Ignore keystore files
+*.jks
+*.keystore
