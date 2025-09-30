@@ -21,11 +21,10 @@ It’s not a fintech product — it’s a personal notebook for your money.
 ---
 
 ## 📸 Screenshots  
-*(to be added before public announcement)*
 
-| Main Menu | Add Expense | View All |
-|-----------|-------------|----------|
-| ![](docs/screenshots/main_menu.png) | ![](docs/screenshots/add_expense.png) | ![](docs/screenshots/view_all.png) |
+![main](https://github.com/user-attachments/assets/9e325b1a-9383-4355-905e-db4bafcd37d4)
+
+
 
 ---
 
