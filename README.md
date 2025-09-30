@@ -1,9 +1,19 @@
 # 📱 ExpenseTracker
 *A simple, offline-first budgeting app designed for daily use.*
 
-[![GitHub release](https://img.shields.io/github/v/release/PIXEL-PEN/Expense-Tracker)](https://github.com/PIXEL-PEN/Expense-Tracker/releases)
-[![License](https://img.shields.io/github/license/PIXEL-PEN/Expense-Tracker)](LICENSE)
-[![Issues](https://img.shields.io/github/issues/PIXEL-PEN/Expense-Tracker)](https://github.com/PIXEL-PEN/Expense-Tracker/issues)
+## 📱 Screenshots
+
+| Main Menu | Add Expense | View Menu |
+|-----------|-------------|-----------|
+| <img src="docs/main.jpg" width="220"/> | <img src="docs/add.jpg" width="220"/> | <img src="docs/view-menu.jpg" width="220"/> |
+
+| View All | By Date | By Category |
+|----------|---------|-------------|
+| <img src="docs/all-exp.jpg" width="220"/> | <img src="docs/by-date.jpg" width="220"/> | <img src="docs/by-categ.jpg" width="220"/> |
+
+| By Month | Settings | Edit Item |
+|----------|----------|-----------|
+| <img src="docs/by-month.jpg" width="220"/> | <img src="docs/settings.jpg" width="220"/> | <img src="docs/edit-item.jpg" width="220"/> |
 
 ---
 
