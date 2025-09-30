@@ -16,10 +16,23 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("../ExpenseTracker-release-key.jks")
+            storePassword KEYSTORE_PASSWORD
+            keyAlias "expensetracker"
+            keyPassword KEY_PASSWORD
+        }
+    }
+
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
         debug {
             // nothing special
@@ -39,7 +52,6 @@ android {
             dimension "mode"
         }
     }
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
