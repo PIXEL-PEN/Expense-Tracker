@@ -22,23 +22,20 @@ It’s not a fintech product — it’s a personal notebook for your money.
 
 ## 📸 Screenshots  
 
+## 📱 Screenshots
 
-![](docs/main.jpg)
-![](docs/add.jpg)
-![](docs/view-menu.jpg)
+| Main Menu | Add Expense | View Menu |
+|-----------|-------------|-----------|
+| <img src="docs/main.jpg" width="220"/> | <img src="docs/add.jpg" width="220"/> | <img src="docs/view-menu.jpg" width="220"/> |
 
-![](docs/all-exp.jpg)
+| View All | By Date | By Category |
+|----------|---------|-------------|
+| <img src="docs/all-exp.jpg" width="220"/> | <img src="docs/by-date.jpg" width="220"/> | <img src="docs/by-categ.jpg" width="220"/> |
 
-![](docs/by-date.jpg)
+| By Month | Settings |
+|----------|----------|
+| <img src="docs/by-month.jpg" width="220"/> | <img src="docs/settings.jpg" width="220"/> |
 
-
-![](docs/by-categ.jpg)
-
-![](docs/by-month.jpg)
-
-
-
-![](docs/settings.jpg)
 ---
 
 ## ✅ Features
