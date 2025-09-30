@@ -1,98 +1,45 @@
-# 📒 Expense Tracker
+# 📱 ExpenseTracker
+*A simple, offline-first budgeting app for Android.*
 
-A simple, offline Android app for daily expense tracking and budgeting.  
-Designed for **fast entry and clear summaries**, with no ads, no accounts, and no internet connection required.
-
----
-
-## ✨ Features
-
-- ➕ **Add Expenses**  
-  Enter description, amount, category, and date.  
-  Default categories: Groceries, Rent, Utilities, Bills, Transport, Other.  
-  Users can add their own (persist after reset, sorted alphabetically).
-
-- 👀 **View Expenses** in multiple ways:
-  - View All – full chronological list
-  - By Date – grouped by day (banners like *10 Sep. 2025*)
-  - By Month – grouped by month (banners like *September – 2025*)
-  - By Category – alphabetized ledger
-  - Day Detail View – drill-down into all expenses for a specific day
-
-- 💰 **Totals everywhere** (day, month, and per-view totals with proper decimals & commas)
-
-- 📤 **Export data**  
-  - CSV → storage  
-  - HTML → email
-
-- 🗑 **Reset database** (expenses only — categories preserved)
-
-- ⚙️ **Settings**
-  - Currency preference (saved in `SharedPreferences`)
-  - Date format spinner *(placeholder — not yet functional)*
+[![GitHub release](https://img.shields.io/github/v/release/PIXEL-PEN/Expense-Tracker)](https://github.com/PIXEL-PEN/Expense-Tracker/releases)
+[![License](https://img.shields.io/github/license/PIXEL-PEN/Expense-Tracker)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/PIXEL-PEN/Expense-Tracker)](https://github.com/PIXEL-PEN/Expense-Tracker/issues)
 
 ---
 
-## 📱 Screenshots
+## 📸 Screenshots  
+*(to be added before public announcement)*
 
-*(to be added by maintainer)*  
-- Main Menu  
-- Add Expense  
-- Settings  
-- Example Views  
-
----
-
-## ⚡ Usage
-
-1. Install on your Android device.  
-2. Add expenses daily.  
-3. View by date, month, or category to spot trends.  
-4. Export data for backup or analysis.  
-
-**Best results:** use it every day as your budgeting tool.
+| Main Menu | Add Expense | View All |
+|-----------|-------------|----------|
+| ![](docs/screenshots/main_menu.png) | ![](docs/screenshots/add_expense.png) | ![](docs/screenshots/view_all.png) |
 
 ---
 
-## ⚠️ Compatibility
-
-- ✅ Tested on **modern Android devices (API 31+, Android 12 and above)**  
-- ⚠️ On **older 16:9 devices** (e.g., Galaxy Note5, Android 7 / API 24):
-  - Top bars and footers may appear deeper  
-  - Buttons and banners may look oversized  
-  - *This is cosmetic only — all functions work correctly*  
-- Scaling adjustments for legacy devices are planned before public release.
+## ✅ Features
+- Quick expense entry with category & date  
+- Multiple views: All, Date-wise, Month-wise, Category-wise  
+- Export to **CSV** and **HTML**  
+- Settings and About screens (with GitHub Discussions link)  
+- Supports Android 7.0 (API 24) and newer  
 
 ---
 
-## 🚀 Planned Enhancements
+## 📦 Installation
+Download the latest signed APK from the [Releases page](https://github.com/PIXEL-PEN/Expense-Tracker/releases).  
 
-- Better scaling on older/smaller screens (API < 24).  
-- Tagging system for categories (Fixed, Essential, Discretionary).  
-- Export improvements (filtering, date ranges).  
-- Improved Settings layout with more options.  
-- Additional visual polish and theming.  
+👉 On Android, enable **Install from Unknown Sources** and sideload the APK.  
 
----
-
-## 🛠 Development
-
-- Built in **Java** with **Room (SQLite)** and classic Android XML layouts.  
-- Active work on `main`; stable checkpoints live in `baseline-stable`.  
-- Freeze tags are used to capture milestones and safe builds.  
-
-### App Variants
-
-- **ExpTrack-dev** → development/debug build  
-  *(package id: `com.example.expensetracker.dev`)*  
-- **ExpTracker** → release build  
-  *(package id: `com.example.expensetracker`)*  
-
-Both can be installed side-by-side.
+*(Later, when available, add F-Droid badge here.)*
 
 ---
 
-## 📜 License
+## 🤝 Contributing
+Feedback, bug reports, and feature requests are welcome in the  
+[GitHub Discussions](https://github.com/PIXEL-PEN/Expense-Tracker/discussions)  
+and [Issues](https://github.com/PIXEL-PEN/Expense-Tracker/issues).  
 
-This project is licensed under the **MIT License**.  
-See [LICENSE](LICENSE) for details.
+---
+
+## 📄 License
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
