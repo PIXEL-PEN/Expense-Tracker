@@ -10,8 +10,9 @@ android {
         applicationId "com.example.expensetracker"
         minSdk 24
         targetSdk 36
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
+
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -24,7 +25,6 @@ android {
             keyPassword KEY_PASSWORD
         }
     }
-
 
     buildTypes {
         release {
@@ -51,6 +51,12 @@ android {
         stable {
             dimension "mode"
         }
+    }
+
+    // 👇 NEW block to remove DependencyInfoBlock
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
     }
 
     compileOptions {
