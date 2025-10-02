@@ -1,34 +1,41 @@
 package com.example.expensetracker;
 
 import android.content.Context;
-import android.os.Environment;
+import android.net.Uri;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
+import java.io.OutputStream;
 
 public class ExportUtils {
 
-    public static boolean exportDatabase(Context context) {
+    /**
+     * Export the raw database file to the user-chosen SAF location.
+     *
+     * @param context   The activity context
+     * @param targetUri The Uri returned from ACTION_CREATE_DOCUMENT
+     * @return true if copy succeeded
+     */
+    public static boolean exportDatabase(Context context, Uri targetUri) {
         try {
             File dbFile = context.getDatabasePath("expenses.db");
-            File exportDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
-            if (!exportDir.exists()) {
-                exportDir.mkdirs();
+            try (FileInputStream fis = new FileInputStream(dbFile);
+                 OutputStream os = context.getContentResolver().openOutputStream(targetUri)) {
+
+                if (os == null) return false;
+
+                byte[] buffer = new byte[8192];
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    os.write(buffer, 0, length);
+                }
+
+                os.flush();
+                return true;
             }
-
-            File outFile = new File(exportDir, "expenses_backup.db");
-            FileChannel src = new FileInputStream(dbFile).getChannel();
-            FileChannel dst = new FileOutputStream(outFile).getChannel();
-            dst.transferFrom(src, 0, src.size());
-            src.close();
-            dst.close();
-
-            return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // shows details in logcat
             return false;
         }
     }
