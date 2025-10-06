@@ -1,5 +1,117 @@
-# 📱 ExpenseTracker
+# 📱 ExpenseTracker (Where it Went)
 *A simple, offline-first budgeting app designed for daily use.*
+
+
+```markdown
+# Where It Went
+
+**Track your spending — not your soul.**  
+*A no-fluff, privacy-respecting expense tracker built for real life.*
+
+---
+
+## 🧭 What Is This?
+
+**Where It Went** is a simple, focused daily expense tracker designed for people who just want to know:  
+> _“Where did all my money go?”_
+
+No budgeting tools.  
+No account syncing.  
+No ads.  
+No cloud.  
+No sign-ups.  
+No surveillance.
+
+Just a clean interface that lets you log your expenses quickly, then shows you **where it went** — by day, month, or category.
+
+---
+
+## 🌱 Why It Exists
+
+Most expense trackers are either:
+
+- Overly complicated (QuickBooks in disguise),
+- Clunky or ugly,
+- Infested with trackers and ads,
+- Or make you link your bank just to log a sandwich.
+
+**Where It Went** was born out of personal frustration with all of the above. It's made for people who value **clarity, simplicity, and privacy**.
+
+It works *because* it doesn’t try to do everything — just one thing well.
+
+---
+
+## ✨ Key Features
+
+- 📆 **Track daily expenses** in seconds  
+- 📊 **Clear overviews**: by day, month, or category  
+- 🧠 **Project / trip friendly**: great for focused tracking  
+- 🚫 **No income tracking**: we leave that to your bank  
+- 🔒 **No cloud, no tracking, no ads, no nonsense**  
+- 💡 **Fully offline** – your data stays on your device
+
+---
+
+## 🛠️ Who It’s For
+
+- People who just want to track spending without a spreadsheet
+- Makers, DIYers, and travelers who track **projects and trips**
+- Privacy-conscious users who don’t want to trade data for features
+- Anyone tired of bloated apps that solve the wrong problems
+
+---
+
+## 📦 Installation
+
+Coming soon to [F-Droid](https://f-droid.org)  
+(Or sideload the APK from [Releases](https://github.com/your-repo/releases) on GitHub)
+
+---
+
+## 📌 Philosophy
+
+> _“A system is only as good as the data you feed it.”_
+
+**Where It Went** is built on this truth.  
+It’s dead simple to use — but still relies on you to enter what you spend, accurately and consistently.
+
+The reward?  
+A clear snapshot of where your money went — no guesswork, no logins, no fluff.
+
+Perfect for:
+- Daily habit tracking (a few seconds per entry)
+- Long-term project expenses (builds, hobbies, renovations)
+- Trip budgeting and analysis (hotels, gas, food, the *“oops”* fund)
+
+---
+
+## 🧱 Open Source
+
+- 100% open source (license: MIT or your preferred license)
+- No hidden dependencies, no phone-home behavior
+- Built with minimalism and transparency in mind
+
+---
+
+## 🙌 A Note from the Developer
+
+This app was created out of personal need, not profit.  
+It’s not trying to be everything — just something **useful, honest, and respectful**.
+
+If it helps you, that’s all the reward I need.
+
+---
+
+## 📬 Feedback & Contributions
+
+Suggestions, bug reports, or feature ideas? Open an issue or get in touch.
+
+Let's keep it simple — and keep it useful.
+
+```
+
+
+
 
 ## 📱 Screenshots
 
@@ -17,81 +129,7 @@
 
 ---
 
-## 🌱 Philosophy
 
-ExpenseTracker is built to be:
-
-- **Fast and simple** → record expenses in seconds, not minutes.  
-- **Daily-friendly** → designed to be used every day without feeling heavy.  
-- **Private & offline** → no accounts, no ads, no internet required.  
-- **Respectful of your data** → everything is stored locally, with export options for backup.  
-
-It’s not a fintech product — it’s a personal notebook for your money.
-
----
-
-## 📸 Screenshots  
-
-## 📱 Screenshots
-
-| Main Menu | Add Expense | View Menu |
-|-----------|-------------|-----------|
-| <img src="docs/main.jpg" width="220"/> | <img src="docs/add.jpg" width="220"/> | <img src="docs/view-menu.jpg" width="220"/> |
-
-| View All | By Date | By Category |
-|----------|---------|-------------|
-| <img src="docs/all-exp.jpg" width="220"/> | <img src="docs/by-date.jpg" width="220"/> | <img src="docs/by-categ.jpg" width="220"/> |
-
-| By Month | Settings |
-|----------|----------|
-| <img src="docs/by-month.jpg" width="220"/> | <img src="docs/settings.jpg" width="220"/> |
-
----
-
-## ✅ Features
-- Quick expense entry with category & date  
-- Multiple views: All, Date-wise, Month-wise, Category-wise  
-- Totals shown per view (day, month, category)  
-- Export to **CSV** and **HTML**  
-- Settings and About screens (with GitHub Discussions link)  
-- Runs entirely offline, no ads, no tracking  
-- Supports Android 7.0 (API 24) and newer  
-
----
-
-## 📦 Installation
-Download the latest signed APK from the [Releases page](https://github.com/PIXEL-PEN/Expense-Tracker/releases).  
-
-👉 On Android, enable **Install from Unknown Sources** and sideload the APK.  
-
-*(Later, when available, add F-Droid badge here.)*
-
----
-
-## ⚠️ Compatibility
-- ✅ Works great on modern devices (Android 12+, API 31+).  
-- ⚠️ On older 16:9 devices (e.g., Galaxy Note5, API 24):  
-  - Top bars and banners may look oversized.  
-  - This is cosmetic only — all functions still work.  
-  - Scaling fixes are planned for future releases.  
-
----
-
-## 🚀 Roadmap
-- Better scaling on smaller/legacy screens.  
-- Tagging system for categories (Fixed, Essential, Discretionary).  
-- Export improvements (filters, date ranges).  
-- Improved Settings layout with more options.  
-- Additional visual polish and theming.  
-
----
-
-## 🤝 Contributing
-Feedback, bug reports, and feature requests are welcome in the  
-[GitHub Discussions](https://github.com/PIXEL-PEN/Expense-Tracker/discussions)  
-and [Issues](https://github.com/PIXEL-PEN/Expense-Tracker/issues).  
-
----
 
 ## 📄 License
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
