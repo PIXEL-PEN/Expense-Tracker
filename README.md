@@ -2,7 +2,6 @@
 *A simple, offline-first budgeting app designed for daily use.*
 
 
-```markdown
 # Where It Went
 
 **Track your spending — not your soul.**  
@@ -10,7 +9,7 @@
 
 ---
 
-## 🧭 What Is This?
+<h2 style="font-size:1.6em; font-weight:700;">🧭 What Is This?</h2>
 
 **Where It Went** is a simple, focused daily expense tracker designed for people who just want to know:  
 > _“Where did all my money go?”_
@@ -26,7 +25,7 @@ Just a clean interface that lets you log your expenses quickly, then shows you *
 
 ---
 
-## 🌱 Why It Exists
+<h2 style="font-size:1.6em; font-weight:700;">🌱 Why It Exists</h2>
 
 Most expense trackers are either:
 
@@ -35,13 +34,14 @@ Most expense trackers are either:
 - Infested with trackers and ads,
 - Or make you link your bank just to log a sandwich.
 
-**Where It Went** was born out of personal frustration with all of the above. It's made for people who value **clarity, simplicity, and privacy**.
+**Where It Went** was born out of personal frustration with all of the above.  
+It's made for people who value **clarity, simplicity, and privacy**.
 
 It works *because* it doesn’t try to do everything — just one thing well.
 
 ---
 
-## ✨ Key Features
+<h2 style="font-size:1.6em; font-weight:700;">✨ Key Features</h2>
 
 - 📆 **Track daily expenses** in seconds  
 - 📊 **Clear overviews**: by day, month, or category  
@@ -52,23 +52,23 @@ It works *because* it doesn’t try to do everything — just one thing well.
 
 ---
 
-## 🛠️ Who It’s For
+<h2 style="font-size:1.6em; font-weight:700;">🛠️ Who It’s For</h2>
 
-- People who just want to track spending without a spreadsheet
-- Makers, DIYers, and travelers who track **projects and trips**
-- Privacy-conscious users who don’t want to trade data for features
+- People who just want to track spending without a spreadsheet  
+- Makers, DIYers, and travelers who track **projects and trips**  
+- Privacy-conscious users who don’t want to trade data for features  
 - Anyone tired of bloated apps that solve the wrong problems
 
 ---
 
-## 📦 Installation
+<h2 style="font-size:1.6em; font-weight:700;">📦 Installation</h2>
 
 Coming soon to [F-Droid](https://f-droid.org)  
 (Or sideload the APK from [Releases](https://github.com/your-repo/releases) on GitHub)
 
 ---
 
-## 📌 Philosophy
+<h2 style="font-size:1.6em; font-weight:700;">📌 Philosophy</h2>
 
 > _“A system is only as good as the data you feed it.”_
 
@@ -85,15 +85,15 @@ Perfect for:
 
 ---
 
-## 🧱 Open Source
+<h2 style="font-size:1.6em; font-weight:700;">🧱 Open Source</h2>
 
-- 100% open source (license: MIT or your preferred license)
-- No hidden dependencies, no phone-home behavior
+- 100% open source (license: MIT or your preferred license)  
+- No hidden dependencies, no phone-home behavior  
 - Built with minimalism and transparency in mind
 
 ---
 
-## 🙌 A Note from the Developer
+<h2 style="font-size:1.6em; font-weight:700;">🙌 A Note from the Developer</h2>
 
 This app was created out of personal need, not profit.  
 It’s not trying to be everything — just something **useful, honest, and respectful**.
@@ -102,13 +102,12 @@ If it helps you, that’s all the reward I need.
 
 ---
 
-## 📬 Feedback & Contributions
+<h2 style="font-size:1.6em; font-weight:700;">📬 Feedback & Contributions</h2>
 
-Suggestions, bug reports, or feature ideas? Open an issue or get in touch.
+Suggestions, bug reports, or feature ideas?  
+Open an issue or get in touch.
 
 Let's keep it simple — and keep it useful.
-
-```
 
 
 
@@ -133,3 +132,13 @@ Let's keep it simple — and keep it useful.
 
 ## 📄 License
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+
+
+
+
+
+
+
+
+
