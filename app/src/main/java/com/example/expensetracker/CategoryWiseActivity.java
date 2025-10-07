@@ -1,5 +1,6 @@
 package com.example.expensetracker;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -9,7 +10,10 @@ import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -18,13 +22,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class CategoryWiseActivity extends AppCompatActivity {
 
@@ -37,6 +44,10 @@ public class CategoryWiseActivity extends AppCompatActivity {
 
         expensesContainer = findViewById(R.id.categorywise_container);
         LayoutInflater inflater = LayoutInflater.from(this);
+
+        // 🔹 Wire up filter icon to balanced dialog
+        ImageButton btnFilter = findViewById(R.id.btn_filter);
+        btnFilter.setOnClickListener(v -> showSimpleFilterDialog());
 
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String code = prefs.getString("currency_code", "THB");
@@ -182,12 +193,101 @@ public class CategoryWiseActivity extends AppCompatActivity {
         }
     }
 
+    // 🔹 Refined dialog with right-aligned, bold "Pick Dates" link + auto-filled today
+    private void showSimpleFilterDialog() {
+        // Combine built-in + user categories
+        List<String> categories = new ArrayList<>();
+        Collections.addAll(categories, "Groceries", "Transport", "Bills", "Entertainment", "Other");
+
+        List<Expense> all = ExpenseDatabase.getDatabase(this).expenseDao().getAll();
+        for (Expense e : all) {
+            if (e.category != null && !e.category.trim().isEmpty() && !categories.contains(e.category)) {
+                categories.add(e.category);
+            }
+        }
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(dp(20), dp(12), dp(20), dp(8));
+
+        Spinner spinner = new Spinner(this);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, categories);
+        spinner.setAdapter(adapter);
+        layout.addView(spinner);
+
+        // Pre-fill today's date
+        String today = formatPickedDate(Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+
+        TextView txtStart = new TextView(this);
+        txtStart.setText("Start Date: " + today);
+        txtStart.setPadding(0, dp(10), 0, dp(4));
+        layout.addView(txtStart);
+
+        TextView txtEnd = new TextView(this);
+        txtEnd.setText("End Date: " + today);
+        txtEnd.setPadding(0, dp(4), 0, dp(10));
+        layout.addView(txtEnd);
+
+        // Right-aligned “Pick Dates”
+        LinearLayout dateRow = new LinearLayout(this);
+        dateRow.setOrientation(LinearLayout.HORIZONTAL);
+        dateRow.setGravity(android.view.Gravity.END);
+
+        TextView btnPickDates = new TextView(this);
+        btnPickDates.setText("Pick Dates");
+        btnPickDates.setTextColor(0xFF1565C0);
+        btnPickDates.setTextSize(16);
+        btnPickDates.setTypeface(Typeface.DEFAULT_BOLD);
+        btnPickDates.setPadding(dp(8), dp(8), dp(8), dp(8));
+        btnPickDates.setClickable(true);
+        btnPickDates.setOnClickListener(v -> {
+            Calendar cal = Calendar.getInstance();
+            new DatePickerDialog(this, (view, y, m, d) -> {
+                String start = formatPickedDate(y, m, d);
+                txtStart.setText("Start Date: " + start);
+                new DatePickerDialog(this, (v2, y2, m2, d2) -> {
+                    String end = formatPickedDate(y2, m2, d2);
+                    txtEnd.setText("End Date: " + end);
+                }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
+        });
+        dateRow.addView(btnPickDates);
+        layout.addView(dateRow);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Filter by Category & Date")
+                .setView(layout)
+                .setPositiveButton("Apply", (d, which) -> {
+                    String cat = spinner.getSelectedItem().toString();
+                    String start = txtStart.getText().toString().replace("Start Date: ", "");
+                    String end = txtEnd.getText().toString().replace("End Date: ", "");
+                    // TODO: run filtered query with (cat, start, end)
+                })
+                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
+                .create();
+
+        dialog.show();
+    }
+
+    private String formatPickedDate(int year, int monthZeroBased, int day) {
+        try {
+            Calendar c = Calendar.getInstance();
+            c.set(year, monthZeroBased, day);
+            SimpleDateFormat out = new SimpleDateFormat("MMM. d, yyyy", Locale.ENGLISH);
+            return out.format(c.getTime());
+        } catch (Exception e) {
+            return day + "/" + (monthZeroBased + 1) + "/" + year;
+        }
+    }
+
     private int dp(int dps) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dps * density);
     }
 
-    // Helper: latest date in a category (for sorting banners)
     private String latestDate(List<Expense> list) {
         String latest = "";
         for (Expense e : list) {
@@ -198,7 +298,6 @@ public class CategoryWiseActivity extends AppCompatActivity {
         return latest;
     }
 
-    // yyyy-MM-dd → "20 Sep. 2025"
     private String formatFullDate(String raw) {
         try {
             SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
